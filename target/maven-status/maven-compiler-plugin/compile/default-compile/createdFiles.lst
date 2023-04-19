@@ -1,0 +1,15 @@
+me\aragot\togara\listeners\TickListener.class
+me\aragot\togara\items\ItemHandler.class
+me\aragot\togara\entities\DamageDisplay.class
+me\aragot\togara\listeners\PlayerListener.class
+me\aragot\togara\listeners\InventoryListener.class
+me\aragot\togara\entities\TogaraEntity.class
+me\aragot\togara\items\Rarity.class
+me\aragot\togara\items\TogaraItem.class
+me\aragot\togara\commands\TogaraKillCommand.class
+me\aragot\togara\entities\EntityHandler.class
+me\aragot\togara\items\ItemType.class
+me\aragot\togara\listeners\DamageListener.class
+me\aragot\togara\Togara.class
+me\aragot\togara\commands\TestCommand.class
+me\aragot\togara\listeners\EntitySpawnEvent.class

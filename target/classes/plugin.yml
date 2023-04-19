@@ -1,0 +1,17 @@
+name: Togara
+version: '1.0-SNAPSHOT'
+main: me.aragot.togara.Togara
+api-version: 1.19
+prefix: TOG
+authors: [ Aragot ]
+description: Togara unique MMORPG
+website: aragot.com
+commands:
+  test:
+    description: This is a test
+    usage: /test
+    permission: togara.test
+  tkill:
+     description: This is killing all Entities
+     usage: /tkill
+     permission: togara.tkill
