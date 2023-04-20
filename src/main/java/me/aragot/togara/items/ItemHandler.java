@@ -58,7 +58,6 @@ public class ItemHandler {
         Rarity rarity = Rarity.COMMON;
         String name = material.name().toUpperCase();
         if(name.contains("DIAMOND")) rarity = Rarity.UNCOMMON;
-        else if(name.contains("SHELMET")) rarity = Rarity.UNCOMMON;
         else if(name.contains("NETHERITE")) rarity = Rarity.RARE;
 
         return rarity;
