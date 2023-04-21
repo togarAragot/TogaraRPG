@@ -8,19 +8,19 @@ import me.aragot.togara.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,15 +97,20 @@ public class StorageGui implements Listener {
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent e){
         if(!(e.getWhoClicked().getOpenInventory().getTopInventory().getHolder() instanceof StorageHolder)) return;
-
+        if(e.getClickedInventory() == null) return;
         Storage storage = Togara.storageManager.getStorage(e.getWhoClicked().getUniqueId());
-        if(e.getInventory() instanceof StorageHolder){
+        if(e.getClickedInventory().getHolder() instanceof StorageHolder){
             switch (e.getSlot()){
                 case 0:
-                    openStorageGui((Player) e.getWhoClicked(), storage, ((StorageHolder)e.getInventory().getHolder()).getPage() - 1);
+                    int page = ((StorageHolder)e.getInventory().getHolder()).getPage();
+                    if(page - 1 == 0) break;
+                    openStorageGui((Player) e.getWhoClicked(), storage,  (page - 1));
                     break;
                 case 8:
-                    openStorageGui((Player) e.getWhoClicked(), storage, ((StorageHolder)e.getInventory().getHolder()).getPage() + 1);
+                    page = ((StorageHolder)e.getInventory().getHolder()).getPage();
+                    if(e.getCurrentItem().equals(filler)) break;
+                    openStorageGui((Player) e.getWhoClicked(), storage, (page + 1));
+                    break;
                 case 37:
                     if(e.getClick().isLeftClick()){
                         storage.nextFilter();
@@ -121,29 +126,99 @@ public class StorageGui implements Listener {
                         storage.lastSort();
                     }
                     openStorageGui((Player) e.getWhoClicked(), storage, 1);
+                    break;
                 case 43: // Search
+                    if(e.getClick().isRightClick()){
+                        storage.setSearch("");
+                        openStorageGui((Player) e.getWhoClicked(), storage, 1);
+                        break;
+                    } else if(e.getClick().isLeftClick()){
+                        Player player = (Player) e.getWhoClicked();
+                        Location loc = e.getWhoClicked().getLocation();
+                        loc.setX(loc.getBlockX());
+                        loc.setY(-64);
+                        loc.setZ(loc.getBlockZ());
+                        player.sendBlockChange(loc, Material.OAK_SIGN.createBlockData());
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                StoragePacketHandler.openSign(player, loc);
+                            }
+                        }.runTaskLater(Togara.instance, 1);
+                    }
                 case 49:
                     e.getWhoClicked().closeInventory();
                     break;
                 default:
                     if(e.getSlot() == 4 || e.getSlot() == 42 || e.getCurrentItem() == null || e.getWhoClicked().getInventory().firstEmpty() == -1) break;
                     TogaraItem item = Togara.itemHandler.getTogaraItemFromStack(e.getCurrentItem());
-                    if(e.getClick().isLeftClick()){
-
+                    if(item == null) break;
+                    ItemStack toGive = new ItemStack(item.getMaterial());
+                    toGive.setItemMeta(item.getItemMeta());
+                    if(e.getClick().isLeftClick() && !e.getClick().isShiftClick()) toGive.setAmount(1);
+                    else if(e.getClick().isLeftClick() && e.getClick().isShiftClick()) toGive.setAmount(64);
+                    else if(e.getClick().isRightClick() && !e.getClick().isShiftClick()) toGive.setAmount(32);
+                    else if(e.getClick().isRightClick() && e.getClick().isShiftClick()){
+                        int emptySlots = Util.getEmptySlots((Player) e.getWhoClicked());
+                        toGive.setAmount(emptySlots * 64);
                     }
-
+                    int realAmount = storage.removeItems(item.getItemId(), toGive.getAmount());
+                    toGive.setAmount(realAmount);
+                    e.getWhoClicked().getInventory().addItem(toGive);
+                    openStorageGui((Player) e.getWhoClicked(), storage, ((StorageHolder) e.getWhoClicked().getOpenInventory().getTopInventory().getHolder()).getPage());
+                    break;
             }
-
             //else own inventory
         } else {
+            if(e.getCurrentItem() != null){
+                TogaraItem item = Togara.itemHandler.getTogaraItemFromStack(e.getCurrentItem());
+                if(item == null){
+                    e.setCancelled(true);
+                    return;
+                }
+                if(!item.isStackable()){
+                    e.setCancelled(true);
+                    return;
+                }
+                ItemStack toRemove = item.getItemStack();
 
+                int amountOfItems = Util.getAmountOfItems(item.getItemId(), (Player) e.getWhoClicked());
+
+                if(e.getClick().isLeftClick() && !e.getClick().isShiftClick()) toRemove.setAmount(1);
+                else if(e.getClick().isLeftClick() && e.getClick().isShiftClick()){
+                    if(amountOfItems < 64) toRemove.setAmount(amountOfItems);
+                    else toRemove.setAmount(64);
+                }
+                else if(e.getClick().isRightClick() && !e.getClick().isShiftClick()){
+                    if(amountOfItems < 32) toRemove.setAmount(amountOfItems);
+                    else toRemove.setAmount(32);
+                }
+                else if(e.getClick().isRightClick() && e.getClick().isShiftClick()) toRemove.setAmount(amountOfItems);
+
+                int realAmount = storage.addItems(item.getItemId(), toRemove.getAmount());
+                toRemove.setAmount(realAmount);
+
+                Util.removeItems((Player ) e.getWhoClicked(), item.getItemId(), realAmount);
+                openStorageGui((Player) e.getWhoClicked(), storage, ((StorageHolder) e.getWhoClicked().getOpenInventory().getTopInventory().getHolder()).getPage());
+            }
         }
         e.setCancelled(true);
     }
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent e){
+        if(e.getReason() == InventoryCloseEvent.Reason.OPEN_NEW) return;
         if(e.getInventory().getHolder() instanceof StorageHolder) Togara.storageManager.saveStorage(e.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onSignEditEvent(SignChangeEvent e){
+        Player player = e.getPlayer();
+        if(!(player.getOpenInventory().getTopInventory().getHolder() instanceof StorageHolder)) return;
+        Storage storage = Togara.storageManager.getStorage(player.getUniqueId());
+        String searchTerm = Togara.mm.serialize(e.line(0));
+        storage.setSearch(searchTerm);
+        openStorageGui(player, storage, 1);
     }
 
     //Maybe critical code
@@ -155,12 +230,10 @@ public class StorageGui implements Listener {
 
         for(int i = 0; i < 9; i++) inventory.setItem(i, filler);
 
-
-
         List<String> itemIds = getDisplayItemsForStorage(storage);
 
         size = itemIds.size();
-        int totalPages = (int) Math.ceil(size / 27);
+        int totalPages = (int) Math.ceil((double) size / 27);
 
         ItemMeta statsMeta = stats.getItemMeta();
         statsMeta.displayName(Togara.mm.deserialize("<gold>Storage Statistics").decoration(TextDecoration.ITALIC, false));
@@ -170,27 +243,35 @@ public class StorageGui implements Listener {
         statsLore.add(Togara.mm.deserialize("<yellow>Total Pages: <white>" + totalPages + "</white></yellow>").decoration(TextDecoration.ITALIC, false));
         statsLore.add(Togara.mm.deserialize("<yellow>Current Page: <white>" + page + "</white></yellow>").decoration(TextDecoration.ITALIC, false));
         statsMeta.lore(statsLore);
+        stats.setItemMeta(statsMeta);
 
         inventory.setItem(4, stats);
 
         inventory.setItem(0, lastPage);
         inventory.setItem(8, nextPage);
-        if(page == 1) inventory.setItem(0, filler);
-        else if(page == totalPages) inventory.setItem(8, filler);
 
+        if(page > totalPages) page = totalPages;
+        else if(page < 1) page = 1;
+
+        if(page == 1) inventory.setItem(0, filler);
+        if(page == totalPages) inventory.setItem(8, filler);
 
         int index = 0;
-        if(page != 1) index = 27 * page;
+        if(page != 1) index = 27 * (page - 1);
         if(index > itemIds.size()) return false;
 
-        for(int i = 9; i < 35; i++){
+        for(int i = 9; i < 36; i++){
             if(index == itemIds.size()) break;
             if(itemIds.get(index).equalsIgnoreCase("NOTHING")){
                 inventory.setItem(i, nothing);
                 break;
             }
-            ItemStack stack = Togara.itemHandler.getTogaraItemById(itemIds.get(index)).getItemStack();
+            ItemStack stack = Togara.itemHandler.getTogaraItemById(itemIds.get(index)).getTogaraItemStack();
+
+            ItemMeta stackMeta = stack.getItemMeta();
             stack.setAmount(storage.getAmount(itemIds.get(index)));
+            stackMeta.displayName(stackMeta.displayName().append(Togara.mm.deserialize(" <dark_gray>x " + stack.getAmount() + "<dark_gray>")));
+            stack.setItemMeta(stackMeta);
             inventory.setItem(i, stack);
             index++;
         }
@@ -259,7 +340,7 @@ public class StorageGui implements Listener {
             } else if(rar == Rarity.RARE){
                 color = "blue";
             } else if(rar == Rarity.EPIC){
-                color = "purple";
+                color = "dark_purple";
             } else if(rar == Rarity.LEGENDARY){
                 color = "gold";
             }
@@ -288,7 +369,7 @@ public class StorageGui implements Listener {
 
         searchLore.add(Component.text(" "));
         if(!search.isEmpty()){
-            searchLore.add(Togara.mm.deserialize("<light_gray>Showing results for <yellow>'" + search + "'</yellow><light_gray>").decoration(TextDecoration.ITALIC, false));
+            searchLore.add(Togara.mm.deserialize("<gray>Showing results for <yellow>'" + search + "'</yellow><gray>").decoration(TextDecoration.ITALIC, false));
             searchLore.add(Component.text(" "));
         }
         searchLore.add(Togara.mm.deserialize("<blue>Left-Click to start a new Search<blue>").decoration(TextDecoration.ITALIC, false));
