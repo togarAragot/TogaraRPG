@@ -3,6 +3,7 @@ package me.aragot.togara.storage;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import me.aragot.togara.Togara;
 
 import java.io.*;
 import java.util.HashMap;
@@ -19,8 +20,10 @@ public class StorageManager {
     }
 
     private void init() {
-        if(dir.exists()) return;
-        dir.mkdirs();
+        if(!dir.exists()){
+            dir.mkdirs();
+            return;
+        }
         File[] storageList = dir.listFiles();
         Gson gson = new Gson();
         for(File file : storageList){
