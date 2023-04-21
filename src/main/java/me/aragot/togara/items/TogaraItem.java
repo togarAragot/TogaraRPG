@@ -41,7 +41,7 @@ public class TogaraItem {
         } else if(this.rarity == Rarity.RARE){
             color = "blue";
         } else if(this.rarity == Rarity.EPIC){
-            color = "purple";
+            color = "dark_purple";
         } else if(this.rarity == Rarity.LEGENDARY){
             color = "gold";
         }
@@ -88,6 +88,17 @@ public class TogaraItem {
 
     public ItemStack getItemStack(){
         return new ItemStack(this.material);
+    }
+
+    public ItemStack getTogaraItemStack(){
+        ItemStack stack = new ItemStack(this.material);
+        stack.setItemMeta(this.getItemMeta());
+        return stack;
+    }
+
+    public boolean isStackable(){
+        if(material.getMaxStackSize() == 1) return false;
+        return true;
     }
 
 }
