@@ -96,7 +96,6 @@ public class ItemHandler {
         ItemMeta meta = stack.getItemMeta();
         String itemId = meta.getPersistentDataContainer().get(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING);
         if(itemId == null) return null;
-
         return getTogaraItemById(itemId);
     }
 
