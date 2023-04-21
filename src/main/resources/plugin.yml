@@ -12,6 +12,10 @@ commands:
     usage: /test
     permission: togara.test
   tkill:
-     description: This is killing all Entities
-     usage: /tkill
-     permission: togara.tkill
+    description: This is killing all Entities
+    usage: /tkill
+    permission: togara.tkill
+  storage:
+    description: Opens your Storage
+    usage: /storage <page>
+    permission: togara.storage

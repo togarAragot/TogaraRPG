@@ -66,6 +66,10 @@ public class TogaraItem {
         this.material = material;
     }
 
+    public Rarity getRarity() {
+        return rarity;
+    }
+
     public String getItemId() {
         return itemId;
     }
@@ -80,6 +84,10 @@ public class TogaraItem {
 
     public void setType(ItemType type) {
         this.type = type;
+    }
+
+    public ItemStack getItemStack(){
+        return new ItemStack(this.material);
     }
 
 }

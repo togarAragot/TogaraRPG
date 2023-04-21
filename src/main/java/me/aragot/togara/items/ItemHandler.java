@@ -2,6 +2,10 @@ package me.aragot.togara.items;
 
 import me.aragot.togara.Togara;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 
@@ -20,6 +24,13 @@ public class ItemHandler {
             itemList.add(item);
         }
         registerCustomItems();
+    }
+
+    public TogaraItem getTogaraItemById(String itemId){
+        for(TogaraItem item : itemList){
+            if(item.getItemId().equalsIgnoreCase(itemId)) return item;
+        }
+        return null;
     }
 
     public TogaraItem getTogaraItemByMaterial(Material material){
@@ -63,9 +74,30 @@ public class ItemHandler {
         return rarity;
     }
 
+    public Rarity getRarity(String itemId){
+        Rarity rarity = Rarity.COMMON;
+        for(TogaraItem item : itemList){
+            if(item.getItemId().equalsIgnoreCase(itemId)) return item.getRarity();
+        }
+        return rarity;
+    }
     public void registerCustomItems(){
 
     }
 
+    public String getItemIdFromStack(ItemStack stack){
+        ItemMeta meta = stack.getItemMeta();
+        String itemId = meta.getPersistentDataContainer().get(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING);
+        if(itemId != null) return itemId;
+        return "";
+    }
+
+    public TogaraItem getTogaraItemFromStack(ItemStack stack){
+        ItemMeta meta = stack.getItemMeta();
+        String itemId = meta.getPersistentDataContainer().get(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING);
+        if(itemId == null) return null;
+
+        return getTogaraItemById(itemId);
+    }
 
 }
