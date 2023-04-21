@@ -1,5 +1,11 @@
 package me.aragot.togara;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import me.aragot.togara.commands.StorageCommand;
 import me.aragot.togara.commands.TestCommand;
 import me.aragot.togara.commands.TogaraKillCommand;
@@ -8,6 +14,7 @@ import me.aragot.togara.items.ItemHandler;
 import me.aragot.togara.listeners.*;
 import me.aragot.togara.storage.StorageGui;
 import me.aragot.togara.storage.StorageManager;
+import me.aragot.togara.storage.StoragePacketHandler;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,6 +30,7 @@ public final class Togara extends JavaPlugin {
     public static EntityHandler entityHandler;
     public static StorageManager storageManager;
     public static ItemHandler itemHandler;
+    public static ProtocolManager protocolManager;
 
     public static Togara getInstance(){
         return instance;
@@ -35,6 +43,9 @@ public final class Togara extends JavaPlugin {
         logger = this.getLogger();
         manager = this.getServer().getPluginManager();
         mm = MiniMessage.miniMessage();
+        protocolManager = ProtocolLibrary.getProtocolManager();
+        initProtocolListeners();
+
         entityHandler = new EntityHandler();
         entityHandler.register();
         itemHandler = new ItemHandler();
@@ -49,6 +60,9 @@ public final class Togara extends JavaPlugin {
         manager.registerEvents(new TickListener(), this);
         manager.registerEvents(new DamageListener(), this);
         manager.registerEvents(new PlayerListener(), this);
+        manager.registerEvents(new StorageGui(), this);
+
+
         //Boot Message
         this.getLogger().info(
                 "\n$$$$$$$$\\                                               $$$$$$$\\  $$$$$$$\\   $$$$$$\\  \n" +
@@ -62,6 +76,24 @@ public final class Togara extends JavaPlugin {
                 "                 $$\\   $$ |                                                           \n" +
                 "                 \\$$$$$$  |                                                           \n" +
                 "                  \\______/                                                            ");
+
+
+    }
+
+    private void initProtocolListeners() {
+
+        protocolManager.addPacketListener(new PacketAdapter(
+                this,
+                ListenerPriority.NORMAL,
+                PacketType.Play.Client.UPDATE_SIGN
+        ) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                StoragePacketHandler.onUpdateSignEvent(event);
+            }
+        });
+
+
 
 
     }
