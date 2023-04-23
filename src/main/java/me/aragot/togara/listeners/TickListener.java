@@ -13,5 +13,6 @@ public class TickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onTickEvent(ServerTickEndEvent e){
         Togara.entityHandler.update();
+        Togara.playerHandler.tick();
     }
 }

@@ -2,6 +2,7 @@ package me.aragot.togara.entities;
 
 import me.aragot.togara.Togara;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 
@@ -15,6 +16,7 @@ public class EntityHandler {
 
 
     public EntityHandler(){
+        register();
     }
 
     public void damage(EntityDamageEvent e){
@@ -26,7 +28,8 @@ public class EntityHandler {
             }
         }
         if(entity == null) return;
-        entity.getEntity().setHealth(entity.getEntity().getMaxHealth());
+
+        entity.getEntity().setHealth(entity.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 
         long totalDamage = Math.round(e.getDamage() * 5);
         new DamageDisplay(entity.getEntity().getWorld(), entity.getEntity().getEyeLocation(), totalDamage);

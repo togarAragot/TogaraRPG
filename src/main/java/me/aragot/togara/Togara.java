@@ -12,6 +12,7 @@ import me.aragot.togara.commands.TogaraKillCommand;
 import me.aragot.togara.entities.EntityHandler;
 import me.aragot.togara.items.ItemHandler;
 import me.aragot.togara.listeners.*;
+import me.aragot.togara.player.PlayerHandler;
 import me.aragot.togara.storage.StorageGui;
 import me.aragot.togara.storage.StorageManager;
 import me.aragot.togara.storage.StoragePacketHandler;
@@ -27,6 +28,7 @@ public final class Togara extends JavaPlugin {
     public static Logger logger;
     public static PluginManager manager;
     public static MiniMessage mm;
+    public static PlayerHandler playerHandler;
     public static EntityHandler entityHandler;
     public static StorageManager storageManager;
     public static ItemHandler itemHandler;
@@ -46,8 +48,9 @@ public final class Togara extends JavaPlugin {
         protocolManager = ProtocolLibrary.getProtocolManager();
         initProtocolListeners();
 
+
+        playerHandler = new PlayerHandler();
         entityHandler = new EntityHandler();
-        entityHandler.register();
         itemHandler = new ItemHandler();
         storageManager = new StorageManager();
         StorageGui.init();

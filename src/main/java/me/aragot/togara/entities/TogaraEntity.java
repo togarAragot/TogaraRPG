@@ -22,7 +22,7 @@ public class TogaraEntity {
     public TogaraEntity(LivingEntity entity){
         this.entity = entity;
         this.health = (long) (entity.getHealth() * 5);
-        this.maxHealth = (long) (entity.getMaxHealth() * 5L);
+        this.maxHealth = (long) (entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 5L);
         entityName = entity.getName();
         this.level = 1;
         spawnHealthTag();
