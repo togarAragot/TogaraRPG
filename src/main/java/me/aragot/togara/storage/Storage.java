@@ -1,7 +1,7 @@
 package me.aragot.togara.storage;
 
 import me.aragot.togara.items.Rarity;
-import me.aragot.togara.storage.sort.Sort;
+import me.aragot.togara.items.ItemType;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +12,7 @@ public class Storage {
     private UUID owner;
     private HashMap<String, Integer> items;
     private Rarity filter;
-    private Sort sorting;
+    private ItemType itemType;
     private String search = "";
     private int maxAmount = 999;
 
@@ -20,13 +20,13 @@ public class Storage {
         this.owner = owner;
         this.items = new HashMap<>();
         this.filter = Rarity.ALL;
-        this.sorting = Sort.NONE;
+        this.itemType = ItemType.ALL;
     }
     public Storage(UUID owner, HashMap<String, Integer> items) {
         this.owner = owner;
         this.items = items;
         this.filter = Rarity.ALL;
-        this.sorting = Sort.NONE;
+        this.itemType = ItemType.ALL;
     }
 
 
@@ -72,12 +72,12 @@ public class Storage {
         this.filter = filter;
     }
 
-    public Sort getSorting() {
-        return sorting;
+    public ItemType getItemType() {
+        return itemType;
     }
 
-    public void setSorting(Sort sorting) {
-        this.sorting = sorting;
+    public void setItemType(ItemType itemType) {
+        this.itemType = itemType;
     }
 
     public int getSize(){
@@ -113,10 +113,10 @@ public class Storage {
         } else this.filter = Rarity.ALL;
     }
 
-    public void nextSort(){
-        if(this.sorting.getIndex() < Sort.size - 1){
-            this.sorting = Sort.values()[sorting.getIndex() + 1];
-        } else this.sorting = Sort.NONE;
+    public void nextItemType(){
+        if(this.itemType.getIndex() < ItemType.size - 1){
+            this.itemType = ItemType.values()[itemType.getIndex() + 1];
+        } else this.itemType = ItemType.ALL;
     }
 
     public void lastFilter(){
@@ -124,10 +124,10 @@ public class Storage {
             this.filter = Rarity.values()[filter.getIndex() - 1];
         } else this.filter = Rarity.values()[Rarity.values().length - 1];
     }
-    public void lastSort(){
-        if(this.sorting.getIndex() > 0){
-            this.sorting = Sort.values()[sorting.getIndex() - 1];
-        } else this.sorting = Sort.values()[Sort.values().length - 1];
+    public void lastItemType(){
+        if(this.itemType.getIndex() > 0){
+            this.itemType = ItemType.values()[itemType.getIndex() - 1];
+        } else this.itemType = ItemType.values()[ItemType.values().length - 1];
     }
 
 }

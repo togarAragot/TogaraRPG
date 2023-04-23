@@ -1,9 +1,9 @@
 package me.aragot.togara.storage;
 
 import me.aragot.togara.Togara;
+import me.aragot.togara.items.ItemType;
 import me.aragot.togara.items.Rarity;
 import me.aragot.togara.items.TogaraItem;
-import me.aragot.togara.storage.sort.Sort;
 import me.aragot.togara.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -32,7 +32,7 @@ public class StorageGui implements Listener {
     private static ItemStack close;
     private static ItemStack search;
     private static ItemStack filter;
-    private static ItemStack sort;
+    private static ItemStack itemType;
     private static ItemStack lastPage;
     private static ItemStack nextPage;
     private static ItemStack info;
@@ -59,10 +59,10 @@ public class StorageGui implements Listener {
         meta.displayName(Togara.mm.deserialize("<yellow>Filter by</yellow>").decoration(TextDecoration.ITALIC, false));
         filter.setItemMeta(meta);
 
-        sort = new ItemStack(Material.NETHER_STAR);
-        meta = sort.getItemMeta();
+        itemType = new ItemStack(Material.NETHER_STAR);
+        meta = itemType.getItemMeta();
         meta.displayName(Togara.mm.deserialize("<yellow>Sort by</yellow>").decoration(TextDecoration.ITALIC, false));
-        sort.setItemMeta(meta);
+        itemType.setItemMeta(meta);
 
         nothing = new ItemStack(Material.BARRIER);
         meta = nothing.getItemMeta();
@@ -121,9 +121,9 @@ public class StorageGui implements Listener {
                     break;
                 case 38:
                     if(e.getClick().isLeftClick()){
-                        storage.nextSort();
+                        storage.nextItemType();
                     } else if(e.getClick().isRightClick()){
-                        storage.lastSort();
+                        storage.lastItemType();
                     }
                     openStorageGui((Player) e.getWhoClicked(), storage, 1);
                     break;
@@ -284,11 +284,11 @@ public class StorageGui implements Listener {
         newFilter.setItemMeta(filterMeta);
         inventory.setItem(37, newFilter);
 
-        ItemMeta sortMeta = sort.getItemMeta();
-        sortMeta.lore(getSortLore(storage.getSorting()));
-        ItemStack newSort = sort.clone();
-        newSort.setItemMeta(sortMeta);
-        inventory.setItem(38, newSort);
+        ItemMeta itemTypeMeta = itemType.getItemMeta();
+        itemTypeMeta.lore(getItemTypeLore(storage.getItemType()));
+        ItemStack newItemType = itemType.clone();
+        itemType.setItemMeta(itemTypeMeta);
+        inventory.setItem(38, itemType);
 
         inventory.setItem(42, info);
 
@@ -307,7 +307,7 @@ public class StorageGui implements Listener {
     public static List<String> getDisplayItemsForStorage(Storage storage){
         ArrayList<String> itemIds = new ArrayList<>();
         Rarity filter = storage.getFilter();
-        Sort sorting = storage.getSorting();
+        ItemType ItemType = storage.getItemType();
         String search = storage.getSearch();
 
         for(String itemId : storage.getItems().keySet()){
@@ -318,7 +318,7 @@ public class StorageGui implements Listener {
 
         /*if(){
 
-          ADD SORT FOR LIST!!!!!
+          ADD ItemType FOR LIST!!!!!
 
         }*/
 
@@ -349,19 +349,26 @@ public class StorageGui implements Listener {
             else filterList.add(Togara.mm.deserialize("<" + color + ">" + rar.name() + "</" + color + ">" ).decoration(TextDecoration.ITALIC, false));
             if(rar == Rarity.ALL) filterList.add(Component.text(" "));
         }
+
+        filterList.add(Component.text(" "));
+        filterList.add(Togara.mm.deserialize("<blue>Left-Click to move down").decoration(TextDecoration.ITALIC, false));
+        filterList.add(Togara.mm.deserialize("<blue>Right-Click to move up").decoration(TextDecoration.ITALIC, false));
         return filterList;
     }
 
-    private static List<Component> getSortLore(Sort sort){
-        ArrayList<Component> sortList = new ArrayList<>();
-        sortList.add(Component.text(" "));
-        for(Sort sorting : Sort.values()){
-            if(sorting == sort) sortList.add(Togara.mm.deserialize("<white>" + sorting.name().replaceAll("_", " ") + " ←</white>").decoration(TextDecoration.ITALIC, false));
-            else sortList.add(Togara.mm.deserialize("<white>" + sorting.name().replaceAll("_", " ") + "</white>").decoration(TextDecoration.ITALIC, false));
-            if(sorting == Sort.NONE) sortList.add(Component.text(" "));
-
+    private static List<Component> getItemTypeLore(ItemType itemType){
+        ArrayList<Component> itemTypeList = new ArrayList<>();
+        itemTypeList.add(Component.text(" "));
+        for(ItemType type : me.aragot.togara.items.ItemType.values()){
+            if(type.getIndex() == -1) continue;
+            if(itemType == type) itemTypeList.add(Togara.mm.deserialize("<white>" + type.name().replaceAll("_", " ") + " ←</white>").decoration(TextDecoration.ITALIC, false));
+            else itemTypeList.add(Togara.mm.deserialize("<white>" + type.name().replaceAll("_", " ") + "</white>").decoration(TextDecoration.ITALIC, false));
+            if(type == ItemType.ALL) itemTypeList.add(Component.text(" "));
         }
-        return sortList;
+        itemTypeList.add(Component.text(" "));
+        itemTypeList.add(Togara.mm.deserialize("<blue>Left-Click to move down").decoration(TextDecoration.ITALIC, false));
+        itemTypeList.add(Togara.mm.deserialize("<blue>Right-Click to move up").decoration(TextDecoration.ITALIC, false));
+        return itemTypeList;
     }
 
     private static List<Component> getSearchLore(String search){
