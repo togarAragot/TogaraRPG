@@ -1,6 +1,7 @@
 package me.aragot.togara.items;
 
 import me.aragot.togara.Togara;
+import me.aragot.togara.items.crops.Crop;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +16,7 @@ public class ItemHandler {
 
     public ItemHandler(){
 
+        Crop.register();
         for(Material mat : Material.values()){
             ItemType type = getItemType(mat);
             Rarity rarity = getRarity(mat);
@@ -46,6 +48,7 @@ public class ItemHandler {
         ItemType type = ItemType.MISCELLANEOUS;
         String name = material.name().toUpperCase();
 
+
         if(material.isBlock()) type = ItemType.BLOCK;
         else if(material.isEdible()) type = ItemType.CONSUMABLE;
         else if(name.contains("SWORD")) type = ItemType.SWORD;
@@ -61,8 +64,17 @@ public class ItemHandler {
         else if(name.contains("HELMET")) type = ItemType.HELMET;
         else if(name.contains("POTION")) type = ItemType.POTION;
         else if(name.contains("ARROW")) type = ItemType.ARROW;
+        else if(Crop.isCrop(material)) type = ItemType.CROP;
 
         return type;
+    }
+
+    public ItemType getItemType(String itemId){
+        ItemType itemType = ItemType.MISCELLANEOUS;
+        for(TogaraItem item : itemList){
+            if(item.getItemId().equalsIgnoreCase(itemId)) return item.getType();
+        }
+        return itemType;
     }
 
     private Rarity getRarity(Material material){

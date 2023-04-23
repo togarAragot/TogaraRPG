@@ -114,8 +114,8 @@ public class Storage {
     }
 
     public void nextItemType(){
-        if(this.itemType.getIndex() < ItemType.size - 1){
-            this.itemType = ItemType.values()[itemType.getIndex() + 1];
+        if(this.itemType.getIndex() < ItemType.getStorageSize() - 1){
+            this.itemType = ItemType.getStorageValues()[itemType.getIndex() + 1];
         } else this.itemType = ItemType.ALL;
     }
 
@@ -126,8 +126,8 @@ public class Storage {
     }
     public void lastItemType(){
         if(this.itemType.getIndex() > 0){
-            this.itemType = ItemType.values()[itemType.getIndex() - 1];
-        } else this.itemType = ItemType.values()[ItemType.values().length - 1];
+            this.itemType = ItemType.getStorageValues()[itemType.getIndex() - 1];
+        } else this.itemType = ItemType.getStorageValues()[ItemType.getStorageValues().length - 1];
     }
 
 }

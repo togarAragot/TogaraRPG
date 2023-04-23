@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class StorageGui implements Listener {
@@ -307,25 +308,18 @@ public class StorageGui implements Listener {
     public static List<String> getDisplayItemsForStorage(Storage storage){
         ArrayList<String> itemIds = new ArrayList<>();
         Rarity filter = storage.getFilter();
-        ItemType ItemType = storage.getItemType();
+        ItemType itemType = storage.getItemType();
         String search = storage.getSearch();
 
         for(String itemId : storage.getItems().keySet()){
-            if(filter == Rarity.ALL || Togara.itemHandler.getRarity(itemId) == filter){
+            if(filter == Rarity.ALL || Togara.itemHandler.getRarity(itemId) == filter && itemType == ItemType.ALL || Togara.itemHandler.getItemType(itemId) == itemType){
                 if(itemId.replaceAll("_", " ").contains(search.toUpperCase())) itemIds.add(itemId);
             }
         }
 
-        /*if(){
-
-          ADD ItemType FOR LIST!!!!!
-
-        }*/
-
-
         if(!itemIds.isEmpty()) return itemIds;
 
-        return Arrays.asList("NOTHING");
+        return Collections.singletonList("NOTHING");
     }
 
     private static List<Component> getFilterLore(Rarity rarity){

@@ -1,5 +1,7 @@
 package me.aragot.togara.items;
 
+import java.util.ArrayList;
+
 public enum ItemType {
 
     SWORD(-1),
@@ -30,5 +32,17 @@ public enum ItemType {
 
     public int getIndex(){
         return this.i;
+    }
+
+    public static int getStorageSize(){
+        int i = 0;
+        for(ItemType type : ItemType.values()) if (type.getIndex() != -1) i++;
+        return i;
+    }
+
+    public static ItemType[] getStorageValues(){
+        ArrayList<ItemType> usableList = new ArrayList<>();
+        for (ItemType type : ItemType.values()) if(type.getIndex() != -1) usableList.add(type);
+        return usableList.toArray(new ItemType[0]);
     }
 }
