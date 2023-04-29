@@ -1,8 +1,9 @@
-package me.aragot.togara.player;
+package me.aragot.togara.entities.player;
 
 import me.aragot.togara.Togara;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,9 @@ public class PlayerHandler {
     }
 
     public void addPlayer(Player player){
-        playerList.add(new TogaraPlayer(player));
+        TogaraPlayer tPlayer = new TogaraPlayer(player);
+        playerList.add(tPlayer);
+        Togara.entityHandler.addEntity(tPlayer);
     }
 
     public void removePlayer(Player player){
@@ -35,24 +38,9 @@ public class PlayerHandler {
         this.playerList.remove(toRemove);
     }
 
-    private TogaraPlayer getTogaraPlayer(Player player){
+    public TogaraPlayer getTogaraPlayer(Player player){
         for(TogaraPlayer tPlayer : playerList) if(player.getUniqueId().equals(tPlayer.getUUID())) return tPlayer;
         return null;
     }
-
-    public void tick(){
-        for(TogaraPlayer player : playerList) player.tick();
-    }
-
-    public void damage(EntityDamageEvent e){
-        Player player = (Player) e.getEntity();
-        TogaraPlayer tPlayer = getTogaraPlayer(player);
-        if(tPlayer == null) return;
-        double damage = e.getDamage();
-        double finalDamage = damage * (100 - tPlayer.getDefense());
-
-        tPlayer.damage(finalDamage);
-    }
-
 
 }

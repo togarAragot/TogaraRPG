@@ -1,6 +1,8 @@
 package me.aragot.togara.entities;
 
 import me.aragot.togara.Togara;
+import me.aragot.togara.entities.player.TogaraPlayer;
+import me.aragot.togara.items.Rarity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
@@ -15,9 +17,33 @@ public class TogaraEntity {
     private String entityName;
     private LivingEntity entity;
     private ArmorStand healthTag;
+
     private int level;
+    private Rarity entityGrade;
+
+    //Armor stats
+    private int defense;
+    private int magicDefense;
+
+    //General stats
     private long health;
     private long maxHealth;
+    private double mana;
+    private double maxMana;
+    private int speed;
+
+    //Combat stats
+    private int swingRange;
+    private int strength;
+    private int critChance;
+    private int critDamage;
+    private int magicPenetration;
+    private int armorPenetration;
+
+
+    public TogaraEntity(Player player){
+        this.entity = player;
+    }
 
     public TogaraEntity(LivingEntity entity){
         this.entity = entity;
@@ -38,8 +64,6 @@ public class TogaraEntity {
             armorStand.setCustomNameVisible(true);
             armorStand.customName(getHealthString());
         }));
-
-        Togara.instance.getLogger().info("HealthTag at X: " + location.getBlockX() + " Y: " + location.getBlockY() + " Z: " + location.getBlockZ());
     }
 
     public Component getHealthString(){
@@ -48,7 +72,7 @@ public class TogaraEntity {
         return mm.deserialize("<gray>[<yellow>" + level + " ★</yellow>]</gray> <red>" + entityName + "<green> " + health + "<white> / </white>" + maxHealth + "</green> ❤</red>");
     }
 
-    public void renderHealthTag() {
+    public void tick() {
         if(this.healthTag == null){
             spawnHealthTag();
             return;
@@ -56,19 +80,37 @@ public class TogaraEntity {
         if(entity.isDead()){
             Togara.entityHandler.remove(this);
             this.healthTag.remove();
-            Togara.instance.getLogger().info("HealthTag removed at: X: " + healthTag.getLocation().getBlockX() + " Y: " + healthTag.getLocation().getBlockY() + " Z: " + healthTag.getLocation().getBlockZ());
             return;
         }
 
         this.healthTag.teleport(entity.getLocation().add(0, entity.getHeight(), 0));
         this.healthTag.customName(getHealthString());
     }
+    public void damage(TogaraEntity damager, long rawDamage){
+        this.entity.setHealth(this.entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        long totalDamage = getFinalDamage(damager, rawDamage);
 
-    public void damage(long damage){
-        health = health - damage;
+        new DamageDisplay(this.entity.getWorld(), this.entity.getEyeLocation(), totalDamage); //Declare Type
+
+        health = health - totalDamage;
         if(health <= 0){
             entity.setHealth(0);
         }
+    }
+
+    public void naturalDamage(long rawDamage){
+        this.entity.setHealth(this.entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+
+        new DamageDisplay(this.entity.getWorld(), this.entity.getEyeLocation(), rawDamage);
+
+        health = health - rawDamage;
+        if(health <= 0){
+            entity.setHealth(0);
+        }
+    }
+
+    public long getFinalDamage(TogaraEntity damager, long damage){
+
     }
 
     public ArmorStand getHealthTag() {
@@ -101,5 +143,117 @@ public class TogaraEntity {
 
     public void setMaxHealth(long maxHealth) {
         this.maxHealth = maxHealth;
+    }
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public Rarity getEntityGrade() {
+        return entityGrade;
+    }
+
+    public void setEntityGrade(Rarity entityGrade) {
+        this.entityGrade = entityGrade;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public int getMagicDefense() {
+        return magicDefense;
+    }
+
+    public void setMagicDefense(int magicDefense) {
+        this.magicDefense = magicDefense;
+    }
+
+    public double getMana() {
+        return mana;
+    }
+
+    public void setMana(double mana) {
+        this.mana = mana;
+    }
+
+    public double getMaxMana() {
+        return maxMana;
+    }
+
+    public void setMaxMana(double maxMana) {
+        this.maxMana = maxMana;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public int getSwingRange() {
+        return swingRange;
+    }
+
+    public void setSwingRange(int swingRange) {
+        this.swingRange = swingRange;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public int getMagicPenetration() {
+        return magicPenetration;
+    }
+
+    public void setMagicPenetration(int magicPenetration) {
+        this.magicPenetration = magicPenetration;
+    }
+
+    public int getArmorPenetration() {
+        return armorPenetration;
+    }
+
+    public void setArmorPenetration(int armorPenetration) {
+        this.armorPenetration = armorPenetration;
+    }
+
+    public int getCritChance() {
+        return critChance;
+    }
+
+    public void setCritChance(int critChance) {
+        this.critChance = critChance;
+    }
+
+    public int getCritDamage() {
+        return critDamage;
+    }
+
+    public void setCritDamage(int critDamage) {
+        this.critDamage = critDamage;
     }
 }

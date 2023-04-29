@@ -27,8 +27,8 @@ public class TogaraItem {
         this.rarity = rarity;
     }
 
-    public ItemMeta getItemMeta(){
-        MiniMessage mm = MiniMessage.miniMessage();
+    public ItemMeta getDefaultItemMeta(){
+        MiniMessage mm = Togara.mm;
         ItemStack stack = new ItemStack(material);
 
         ItemMeta meta = stack.getItemMeta();
@@ -48,15 +48,57 @@ public class TogaraItem {
 
         PlainTextComponentSerializer serializer = PlainTextComponentSerializer.builder().build();
         meta.displayName(mm.deserialize("<" + color + ">" + serializer.serialize(stack.displayName()).replace("[", "").replace("]", "") + "</" + color + ">").decoration(TextDecoration.ITALIC, false));
-        ArrayList<Component> lore = new ArrayList<>();
         meta.setUnbreakable(true);
         meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING, itemId);
-        //add Description
-        lore.add(Component.text(" "));
+        ArrayList<Component> lore = new ArrayList<>();
+        if(this instanceof TogaraWeapon) lore.addAll(getItemStats(stack));
+        lore.addAll(getDescription());
         lore.add(mm.deserialize("<" + color + "><b>" + rarity.name() + " " + type.name() + "</b></" + color + ">" ).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
         return meta;
     }
+
+    public static ItemMeta getItemMeta(ItemStack stack){
+        MiniMessage mm = Togara.mm;
+
+        ItemMeta meta = stack.getItemMeta();
+        TogaraItem item = Togara.itemHandler.getTogaraItemFromStack(stack);
+
+        //Common rarity color = white
+        String color = "white";
+
+        if(this.rarity == Rarity.UNCOMMON){
+            color = "green";
+        } else if(this.rarity == Rarity.RARE){
+            color = "blue";
+        } else if(this.rarity == Rarity.EPIC){
+            color = "dark_purple";
+        } else if(this.rarity == Rarity.LEGENDARY){
+            color = "gold";
+        }
+
+        PlainTextComponentSerializer serializer = PlainTextComponentSerializer.builder().build();
+        meta.displayName(mm.deserialize("<" + color + ">" + serializer.serialize(stack.displayName()).replace("[", "").replace("]", "") + "</" + color + ">").decoration(TextDecoration.ITALIC, false));
+        meta.setUnbreakable(true);
+        meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING, itemId);
+        ArrayList<Component> lore = new ArrayList<>();
+        if(this instanceof TogaraWeapon) lore.addAll(getItemStats(stack));
+        lore.addAll(getDescription());
+        lore.add(mm.deserialize("<" + color + "><b>" + rarity.name() + " " + type.name() + "</b></" + color + ">" ).decoration(TextDecoration.ITALIC, false));
+        meta.lore(lore);
+        return meta;
+    }
+
+    public ArrayList<Component> getDescription(){
+        ArrayList<Component> toReturn = new ArrayList<>();
+        toReturn.add(Component.text(" "));
+        return toReturn;
+    }
+
+    public ArrayList<Component> getItemStats(ItemStack stack){
+
+    }
+
 
     public Material getMaterial() {
         return material;
@@ -92,7 +134,7 @@ public class TogaraItem {
 
     public ItemStack getTogaraItemStack(){
         ItemStack stack = new ItemStack(this.material);
-        stack.setItemMeta(this.getItemMeta());
+        stack.setItemMeta(this.getDefaultItemMeta());
         return stack;
     }
 

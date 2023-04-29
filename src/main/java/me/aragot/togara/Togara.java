@@ -12,7 +12,7 @@ import me.aragot.togara.commands.TogaraKillCommand;
 import me.aragot.togara.entities.EntityHandler;
 import me.aragot.togara.items.ItemHandler;
 import me.aragot.togara.listeners.*;
-import me.aragot.togara.player.PlayerHandler;
+import me.aragot.togara.entities.player.PlayerHandler;
 import me.aragot.togara.storage.StorageGui;
 import me.aragot.togara.storage.StorageManager;
 import me.aragot.togara.storage.StoragePacketHandler;

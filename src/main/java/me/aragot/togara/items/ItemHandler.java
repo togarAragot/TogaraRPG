@@ -2,6 +2,7 @@ package me.aragot.togara.items;
 
 import me.aragot.togara.Togara;
 import me.aragot.togara.items.crops.Crop;
+import me.aragot.togara.items.melee.TogaraMelee;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -20,9 +21,13 @@ public class ItemHandler {
         for(Material mat : Material.values()){
             ItemType type = getItemType(mat);
             Rarity rarity = getRarity(mat);
+            TogaraItem item;
+            if(type == ItemType.SWORD){
+                item = new TogaraWeapon(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity);
+            } else {
+                item = new TogaraItem(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity);
+            }
 
-
-            TogaraItem item = new TogaraItem(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity);
             itemList.add(item);
         }
         registerCustomItems();

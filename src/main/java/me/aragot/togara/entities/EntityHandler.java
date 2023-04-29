@@ -1,9 +1,11 @@
 package me.aragot.togara.entities;
 
 import me.aragot.togara.Togara;
+import me.aragot.togara.entities.player.TogaraPlayer;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.ArrayList;
@@ -19,22 +21,17 @@ public class EntityHandler {
         register();
     }
 
+    public void attackEntity(Player player, Mob entity){
+        TogaraPlayer tPlayer = Togara.playerHandler.getTogaraPlayer(player);
+        long damage = tPlayer.getHitDamage(entity);
+        TogaraEntity tEntity = getTogaraEntityByEntity(entity);
+        tEntity.damage(tPlayer, damage);
+    }
+
     public void damage(EntityDamageEvent e){
-        TogaraEntity entity = null;
-        for(TogaraEntity tEntity : entityList){
-            if(tEntity.getEntity().getEntityId() == e.getEntity().getEntityId()){
-                entity = tEntity;
-                break;
-            }
-        }
+        TogaraEntity entity = getTogaraEntityByEntity(e.getEntity());
         if(entity == null) return;
-
-        entity.getEntity().setHealth(entity.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-
-        long totalDamage = Math.round(e.getDamage() * 5);
-        new DamageDisplay(entity.getEntity().getWorld(), entity.getEntity().getEyeLocation(), totalDamage);
-
-        entity.damage(totalDamage);
+        entity.naturalDamage((long) e.getDamage());
     }
 
     public void register(){
@@ -55,11 +52,15 @@ public class EntityHandler {
     public void addEntity(LivingEntity entity){
         entityList.add(new TogaraEntity(entity));
     }
+    public void addEntity(TogaraPlayer tPlayer){
+        entityList.add(tPlayer);
+    }
 
     public void update(){
         for(TogaraEntity entity : entityList) {
-            entity.renderHealthTag();
+            entity.tick();
         }
+
         entityList.removeAll(toRemove);
         toRemove.clear();
 
@@ -70,5 +71,12 @@ public class EntityHandler {
 
     public void remove(TogaraEntity entity){
         toRemove.add(entity);
+    }
+
+    public TogaraEntity getTogaraEntityByEntity(Entity entity){
+        for(TogaraEntity tEntity : entityList){
+            if(tEntity.getEntity().getEntityId() == entity.getEntityId()) return tEntity;
+        }
+        return null;
     }
 }

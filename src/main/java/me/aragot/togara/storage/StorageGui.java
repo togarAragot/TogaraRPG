@@ -22,7 +22,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -155,7 +154,7 @@ public class StorageGui implements Listener {
                     TogaraItem item = Togara.itemHandler.getTogaraItemFromStack(e.getCurrentItem());
                     if(item == null) break;
                     ItemStack toGive = new ItemStack(item.getMaterial());
-                    toGive.setItemMeta(item.getItemMeta());
+                    toGive.setItemMeta(item.getDefaultItemMeta());
                     if(e.getClick().isLeftClick() && !e.getClick().isShiftClick()) toGive.setAmount(1);
                     else if(e.getClick().isLeftClick() && e.getClick().isShiftClick()) toGive.setAmount(64);
                     else if(e.getClick().isRightClick() && !e.getClick().isShiftClick()) toGive.setAmount(32);
