@@ -2,7 +2,6 @@ package me.aragot.togara.items;
 
 import me.aragot.togara.Togara;
 import me.aragot.togara.items.crops.Crop;
-import me.aragot.togara.items.melee.TogaraMelee;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
