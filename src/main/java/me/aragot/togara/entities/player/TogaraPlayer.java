@@ -2,13 +2,9 @@ package me.aragot.togara.entities.player;
 
 import me.aragot.togara.Togara;
 import me.aragot.togara.entities.TogaraEntity;
-import net.kyori.adventure.text.Component;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
-import java.text.DecimalFormat;
 import java.util.UUID;
 
 public class TogaraPlayer extends TogaraEntity {
@@ -22,17 +18,7 @@ public class TogaraPlayer extends TogaraEntity {
 
     @Override
     public void tick(){
-        player.sendActionBar(Togara.mm.deserialize("<red>" + getHealth() + " / " + getMaxHealth() + " ❤</red>"));
-    }
-
-    @Override
-    public void damage(long rawDamage) {
-
-        //Damage equation
-
-    }
-
-    public long getHitDamage(Mob mob){
+        player.sendActionBar(Togara.mm.deserialize("<red>" + this.stats.getHealth() + " / " + this.stats.getMaxHealth() + " ❤</red>"));
     }
 
     public Player getPlayer() {

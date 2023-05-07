@@ -23,9 +23,8 @@ public class EntityHandler {
 
     public void attackEntity(Player player, Mob entity){
         TogaraPlayer tPlayer = Togara.playerHandler.getTogaraPlayer(player);
-        long damage = tPlayer.getHitDamage(entity);
         TogaraEntity tEntity = getTogaraEntityByEntity(entity);
-        tEntity.damage(tPlayer, damage);
+        tEntity.damage(tPlayer);
     }
 
     public void damage(EntityDamageEvent e){
