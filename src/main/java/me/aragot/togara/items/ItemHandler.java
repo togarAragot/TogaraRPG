@@ -2,8 +2,12 @@ package me.aragot.togara.items;
 
 import me.aragot.togara.Togara;
 import me.aragot.togara.items.crops.Crop;
+import me.aragot.togara.stats.ItemStats;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -22,7 +26,11 @@ public class ItemHandler {
             Rarity rarity = getRarity(mat);
             TogaraItem item;
             if(type == ItemType.SWORD){
-                item = new TogaraWeapon(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity);
+                ItemStats stats = new ItemStats();
+                double damage = 0;
+                for(AttributeModifier modifier : mat.getDefaultAttributeModifiers(EquipmentSlot.HAND).get(Attribute.GENERIC_ATTACK_DAMAGE)) damage = modifier.getAmount() + damage;
+                stats.setDamage((long) damage);
+                item = new TogaraWeapon(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity, stats);
             } else {
                 item = new TogaraItem(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity);
             }
