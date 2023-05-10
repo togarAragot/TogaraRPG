@@ -15,6 +15,7 @@ public class EntityHandler {
 
     private ArrayList<TogaraEntity> entityList = new ArrayList<>();
     private ArrayList<TogaraEntity> toRemove = new ArrayList<>();
+    public HashMap<TogaraEntity, DamageType> damageQueue = new HashMap<>();
 
 
     public EntityHandler(){
