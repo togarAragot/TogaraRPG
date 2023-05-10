@@ -1,5 +1,6 @@
 package me.aragot.togara.commands;
 
+import me.aragot.togara.entities.enemies.TestMob;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,7 +12,8 @@ public class TestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player){
-            sender.sendMessage("Test works!");
+            new TestMob(((Player) sender).getLocation());
+            sender.sendMessage("Spawned test Mob");
             return true;
         }
         return false;
