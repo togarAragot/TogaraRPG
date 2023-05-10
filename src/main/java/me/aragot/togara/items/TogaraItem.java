@@ -8,12 +8,14 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class TogaraItem {
 
@@ -21,12 +23,45 @@ public class TogaraItem {
     private String itemId;
     private ItemType type;
     private Rarity rarity;
+    private String displayName;
 
     public TogaraItem(Material material, String itemId, ItemType type, Rarity rarity) {
         this.material = material;
         this.itemId = itemId;
         this.type = type;
         this.rarity = rarity;
+        PlainTextComponentSerializer serializer = PlainTextComponentSerializer.builder().build();
+        displayName = serializer.serialize(new ItemStack(material).displayName()).replace("[", "").replace("]", "");
+    }
+
+    public TogaraItem(Material material,String displayName, String itemId, ItemType type, Rarity rarity) {
+        this.material = material;
+        this.itemId = itemId;
+        this.type = type;
+        this.rarity = rarity;
+        this.displayName = displayName;
+    }
+
+    public ItemMeta setItemData(ItemMeta meta, ItemStats stats){
+
+        if(stats.getDefense() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "defense"), PersistentDataType.INTEGER, stats.getDefense());
+        if(stats.getMagicDefense() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "magicDefense"), PersistentDataType.INTEGER, stats.getMagicDefense());
+        if(stats.getMaxHealth() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "maxHealth"), PersistentDataType.LONG, stats.getMaxHealth());
+        if(stats.getHeal() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "heal"), PersistentDataType.INTEGER, stats.getHeal());
+        if(stats.getAntiHeal() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "antiHeal"), PersistentDataType.INTEGER, stats.getAntiHeal());
+        if(stats.getSpeed() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "speed"), PersistentDataType.INTEGER, stats.getSpeed());
+        if(stats.getDamage() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "damage"), PersistentDataType.LONG, stats.getDamage());
+        if(stats.getMaxMana() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "maxMana"), PersistentDataType.DOUBLE, stats.getMaxMana());
+        if(stats.getMana() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "mana"), PersistentDataType.DOUBLE, stats.getMana());
+        if(stats.getStrength() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "strength"), PersistentDataType.INTEGER, stats.getStrength());
+        if(stats.getCritChance() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "critChance"), PersistentDataType.INTEGER, stats.getCritChance());
+        if(stats.getCritDamage() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "critDamage"), PersistentDataType.INTEGER, stats.getCritDamage());
+        if(stats.getMagicPenetration() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "magicPen"), PersistentDataType.INTEGER, stats.getMagicPenetration());
+        if(stats.getArmorPenetration() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "armorPen"), PersistentDataType.INTEGER, stats.getArmorPenetration());
+        if(stats.getTickCooldown() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "tickCooldown"), PersistentDataType.INTEGER, stats.getTickCooldown());
+        if(stats.getManaUse() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "manaUse"), PersistentDataType.DOUBLE, stats.getManaUse());
+        if(stats.getSwingRange() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "swingRange"), PersistentDataType.DOUBLE, stats.getSwingRange());
+        return meta;
     }
 
     public ItemMeta getDefaultItemMeta(){
@@ -48,12 +83,16 @@ public class TogaraItem {
             color = "gold";
         }
 
-        PlainTextComponentSerializer serializer = PlainTextComponentSerializer.builder().build();
-        meta.displayName(mm.deserialize("<" + color + ">" + serializer.serialize(stack.displayName()).replace("[", "").replace("]", "") + "</" + color + ">").decoration(TextDecoration.ITALIC, false));
+
+        meta.displayName(mm.deserialize("<" + color + ">" + displayName + "</" + color + ">").decoration(TextDecoration.ITALIC, false));
         meta.setUnbreakable(true);
         meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING, itemId);
         ArrayList<Component> lore = new ArrayList<>();
-        if(this instanceof TogaraWeapon) lore.addAll(getStatComponents(((TogaraWeapon) this).getItemStats()));
+        if(this instanceof TogaraWeapon){
+            ItemStats stats = ((TogaraWeapon) this).getItemStats();
+            meta = setItemData(meta, stats);
+            lore.addAll(getStatComponents(((TogaraWeapon) this).getItemStats()));
+        }
         lore.addAll(getDescription());
         lore.add(mm.deserialize("<" + color + "><b>" + rarity.name() + " " + type.name() + "</b></" + color + ">" ).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
@@ -65,6 +104,7 @@ public class TogaraItem {
 
         ItemMeta meta = stack.getItemMeta();
         TogaraItem item = Togara.itemHandler.getTogaraItemFromStack(stack);
+        String displayName = item.getDisplayName();
 
         //Common rarity color = white
         String color = "white";
@@ -79,10 +119,8 @@ public class TogaraItem {
             color = "gold";
         }
 
-        PlainTextComponentSerializer serializer = PlainTextComponentSerializer.builder().build();
-        meta.displayName(mm.deserialize("<" + color + ">" + serializer.serialize(stack.displayName()).replace("[", "").replace("]", "") + "</" + color + ">").decoration(TextDecoration.ITALIC, false));
+        meta.displayName(mm.deserialize("<" + color + ">" + displayName + "</" + color + ">").decoration(TextDecoration.ITALIC, false));
         meta.setUnbreakable(true);
-        meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING, item.getItemId());
         ArrayList<Component> lore = new ArrayList<>();
         if(item instanceof TogaraWeapon) lore.addAll(item.getStatComponents(getItemStats(stack)));
         lore.addAll(item.getDescription());
@@ -99,23 +137,23 @@ public class TogaraItem {
 
     public ArrayList<Component> getStatComponents(ItemStats itemStats){
         ArrayList<Component> stats = new ArrayList<>();
-        if(itemStats.getDefense() != 0) stats.add(Togara.mm.deserialize("<blue>Defense: " + itemStats.getDefense() + "</blue>"));
-        if(itemStats.getMagicDefense() != 0) stats.add(Togara.mm.deserialize("<blue>Magic Defense: " + itemStats.getMagicDefense() + "</blue>"));
-        if(itemStats.getMaxHealth() != 0) stats.add(Togara.mm.deserialize("<blue>Max Health: +" + itemStats.getMaxHealth() + "</blue>"));
-        if(itemStats.getHeal() != 0) stats.add(Togara.mm.deserialize("<blue>Heal: " + itemStats.getHeal() + "</blue>"));
-        if(itemStats.getAntiHeal() != 0) stats.add(Togara.mm.deserialize("<blue>Anti-Heal: " + itemStats.getAntiHeal() + "</blue>"));
-        if(itemStats.getSpeed() != 0) stats.add(Togara.mm.deserialize("<blue>Speed: " + itemStats.getSpeed() + "</blue>"));
-        if(itemStats.getDamage() != 0) stats.add(Togara.mm.deserialize("<blue>Damage: " + itemStats.getDamage() + "</blue>"));
-        if(itemStats.getMaxMana() != 0) stats.add(Togara.mm.deserialize("<blue>Max Mana: +" + itemStats.getMana() + "</blue>"));
-        if(itemStats.getMana() != 0) stats.add(Togara.mm.deserialize("<blue>Mana: " + itemStats.getMana() + "</blue>"));
-        if(itemStats.getStrength() != 0) stats.add(Togara.mm.deserialize("<blue>Strength: " + itemStats.getStrength() + "</blue>"));
-        if(itemStats.getCritChance() != 0) stats.add(Togara.mm.deserialize("<blue>Critical Strike Chance: " + itemStats.getCritChance() + "</blue>"));
-        if(itemStats.getCritDamage() != 0) stats.add(Togara.mm.deserialize("<blue>Critical Damage Amplifier: " + itemStats.getDamage() + "</blue>"));
-        if(itemStats.getMagicPenetration() != 0) stats.add(Togara.mm.deserialize("<blue>Magic Penetration: " + itemStats.getMagicPenetration() + "</blue>"));
-        if(itemStats.getArmorPenetration() != 0) stats.add(Togara.mm.deserialize("<blue>Armor Penetration: " + itemStats.getArmorPenetration() + "</blue>"));
-        if(itemStats.getTickCooldown() != 0) stats.add(Togara.mm.deserialize("<blue>Cooldown: " + itemStats.getCooldown() + "</blue>"));
-        if(itemStats.getManaUse() != 0) stats.add(Togara.mm.deserialize("<blue>Mana Cost: " + itemStats.getManaUse() + "</blue>"));
-        if(itemStats.getSwingRange() != 0) stats.add(Togara.mm.deserialize("<blue>Swing Range: " + itemStats.getSwingRange() + "</blue>"));
+        if(itemStats.getDefense() != 0) stats.add(Togara.mm.deserialize("<gray>Defense: <yellow>" + itemStats.getDefense() + "</yellow></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getMagicDefense() != 0) stats.add(Togara.mm.deserialize("<gray>Magic Defense: <dark_purple>" + itemStats.getMagicDefense() + "</dark_purple></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getMaxHealth() != 0) stats.add(Togara.mm.deserialize("<gray>Max Health: <green>+" + itemStats.getMaxHealth() + "</green></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getHeal() != 0) stats.add(Togara.mm.deserialize("<gray>Heal: <green>" + itemStats.getHeal() + "</green></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getAntiHeal() != 0) stats.add(Togara.mm.deserialize("<gray>Anti-Heal: <red>" + itemStats.getAntiHeal() + "</red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getSpeed() != 0) stats.add(Togara.mm.deserialize("<gray>Speed: <white>" + itemStats.getSpeed() + "</white></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getDamage() != 0) stats.add(Togara.mm.deserialize("<gray>Damage: <red>" + itemStats.getDamage() + "</red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getMaxMana() != 0) stats.add(Togara.mm.deserialize("<gray>Max Mana: <aqua>" + itemStats.getMana() + "</aqua></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getMana() != 0) stats.add(Togara.mm.deserialize("<gray>Mana: <aqua>" + itemStats.getMana() + "</aqua></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getStrength() != 0) stats.add(Togara.mm.deserialize("<gray>Strength: <red>" + itemStats.getStrength() + "</red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getCritChance() != 0) stats.add(Togara.mm.deserialize("<gray>Critical Strike Chance: <red>" + itemStats.getCritChance() + "</red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getCritDamage() != 0) stats.add(Togara.mm.deserialize("<gray>Critical Damage Amplifier: <red>" + itemStats.getDamage() + "</red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getMagicPenetration() != 0) stats.add(Togara.mm.deserialize("<gray>Magic Penetration: <dark_red>" + itemStats.getMagicPenetration() + "</dark_red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getArmorPenetration() != 0) stats.add(Togara.mm.deserialize("<gray>Armor Penetration: <dark_red>" + itemStats.getArmorPenetration() + "</dark_red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getTickCooldown() != 0) stats.add(Togara.mm.deserialize("<gray>Cooldown: <red>" + itemStats.getCooldown() + "</red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getManaUse() != 0) stats.add(Togara.mm.deserialize("<gray>Mana Cost: <dark_red>" + itemStats.getManaUse() + "</dark_red></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getSwingRange() != 0) stats.add(Togara.mm.deserialize("<gray>Swing Range: <red>" + itemStats.getSwingRange() + "</red></gray>").decoration(TextDecoration.ITALIC, false));
 
         return stats;
     }
@@ -146,6 +184,15 @@ public class TogaraItem {
         stats.setSwingRange(data.getOrDefault(new NamespacedKey(Togara.instance, "swingRange"), PersistentDataType.DOUBLE, 0d));
 
         return stats;
+    }
+
+    public void give(Player player, int amount){
+        ItemStack stack = new ItemStack(getMaterial());
+        stack.setAmount(amount);
+        stack.setItemMeta(getDefaultItemMeta());
+        //Doesnt work because itemmeta was not set again.
+        if(this instanceof TogaraWeapon) stack.getItemMeta().getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "uuid"), PersistentDataType.STRING, UUID.randomUUID().toString());
+        player.getInventory().addItem(stack);
     }
 
     public Material getMaterial() {
@@ -191,4 +238,15 @@ public class TogaraItem {
         return true;
     }
 
+    public void setRarity(Rarity rarity) {
+        this.rarity = rarity;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 }

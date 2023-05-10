@@ -2,6 +2,7 @@ package me.aragot.togara.items;
 
 import me.aragot.togara.Togara;
 import me.aragot.togara.items.crops.Crop;
+import me.aragot.togara.items.melee.SwordOfTogara;
 import me.aragot.togara.stats.ItemStats;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 
 public class ItemHandler {
 
-    public ArrayList<TogaraItem> itemList = new ArrayList<>();
+    public static ArrayList<TogaraItem> itemList = new ArrayList<>();
 
     public ItemHandler(){
 
@@ -29,7 +30,7 @@ public class ItemHandler {
                 ItemStats stats = new ItemStats();
                 double damage = 0;
                 for(AttributeModifier modifier : mat.getDefaultAttributeModifiers(EquipmentSlot.HAND).get(Attribute.GENERIC_ATTACK_DAMAGE)) damage = modifier.getAmount() + damage;
-                stats.setDamage((long) damage);
+                stats.setDamage((long) damage * 5);
                 item = new TogaraWeapon(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity, stats);
             } else {
                 item = new TogaraItem(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity);
@@ -106,7 +107,7 @@ public class ItemHandler {
         return rarity;
     }
     public void registerCustomItems(){
-
+        SwordOfTogara.register();
     }
 
     public String getItemIdFromStack(ItemStack stack){

@@ -21,6 +21,11 @@ public class TogaraWeapon extends TogaraItem{
         addWeapon(itemId, type);
         this.stats = stats;
     }
+    public TogaraWeapon(Material material, String displayName, String itemId, ItemType type, Rarity rarity, ItemStats stats) {
+        super(material, displayName, itemId, type, rarity);
+        addWeapon(itemId, type);
+        this.stats = stats;
+    }
 
     public static boolean isItemType(String itemId, ItemType type) {
         return weaponList.get(itemId) == type;
@@ -32,5 +37,4 @@ public class TogaraWeapon extends TogaraItem{
     public ItemStats getItemStats(){
         return this.stats;
     }
-
 }

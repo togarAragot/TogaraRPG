@@ -12,6 +12,10 @@ commands:
     description: This is a test
     usage: /test
     permission: togara.test
+  tgive:
+    description: Gives you a Togara item
+    usage: /tgive <itemid> <amount>
+    premission: togara.tgive
   tkill:
     description: This is killing all Entities
     usage: /tkill
