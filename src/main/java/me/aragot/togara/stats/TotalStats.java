@@ -7,15 +7,17 @@ public class TotalStats implements Stats{
     //Entity Stats
     private int level;
     private Rarity entityGrade;
+    private long health;
 
     //Item Stats
     private long damage;
     private double manaUse;
     private int tickCooldown;
 
+    private int heal;
+    private int antiHeal;
     private int defense;
     private int magicDefense;
-    private long health;
     private int speed;
     private double mana;
     private int Strength;
@@ -35,7 +37,8 @@ public class TotalStats implements Stats{
 
         totalStats.setDefense(stats.getDefense());
         totalStats.setMagicDefense(stats.getMagicDefense());
-        totalStats.setHealth(stats.getHealth());
+        totalStats.setHeal(stats.getHeal());
+        totalStats.setAntiHeal(stats.getAntiHeal());
         totalStats.setSpeed(stats.getSpeed());
         totalStats.setMana(stats.getMana());
         totalStats.setStrength(stats.getStrength());
@@ -59,6 +62,7 @@ public class TotalStats implements Stats{
         totalStats.setDefense(stats.getDefense());
         totalStats.setMagicDefense(stats.getMagicDefense());
         totalStats.setHealth(stats.getHealth());
+        totalStats.setHeal(stats.getHeal());
         totalStats.setSpeed(stats.getSpeed());
         totalStats.setMana(stats.getMana());
         totalStats.setStrength(stats.getStrength());
@@ -79,7 +83,7 @@ public class TotalStats implements Stats{
         TotalStats totalStats = new TotalStats();
 
         totalStats.setDefense(t1.getDefense() + t2.getDefense());
-        totalStats.setMagicDefense(t1.getMagicDefense() + t1.getMagicDefense());
+        totalStats.setMagicDefense(t1.getMagicDefense() + t2.getMagicDefense());
         totalStats.setMaxHealth(t1.getMaxHealth() + t2.getMaxHealth());
         totalStats.setHealth(t1.getHealth() + t2.getHealth());
         totalStats.setSpeed(t1.getSpeed() + t2.getSpeed());
@@ -99,6 +103,47 @@ public class TotalStats implements Stats{
         totalStats.setTickCooldown(t1.getTickCooldown() + t2.getTickCooldown());
 
         return totalStats;
+    }
+
+    public void combine(TotalStats t1){
+
+        this.setDefense(this.getDefense() + t1.getDefense());
+        this.setMagicDefense(this.getMagicDefense() + t1.getMagicDefense());
+        this.setMaxHealth(this.getMaxHealth() + t1.getMaxHealth());
+        this.setHealth(this.getHealth() + t1.getHealth());
+        this.setSpeed(this.getSpeed() + t1.getSpeed());
+        this.setMaxMana(this.getMaxMana() + t1.getMaxMana());
+        this.setMana(this.getMana() + t1.getMana());
+        this.setStrength(this.getStrength() + t1.getStrength());
+        this.setCritChance(this.getCritChance() + t1.getCritChance());
+        this.setCritDamage(this.getCritDamage() + t1.getCritDamage());
+        this.setMagicPenetration(this.getMagicPenetration() + t1.getMagicPenetration());
+        this.setArmorPenetration(this.getArmorPenetration() + t1.getArmorPenetration());
+        this.setSwingRange(this.getSwingRange() + t1.getSwingRange());
+        this.setLevel(this.getLevel() + t1.getLevel());
+        //totalStats.setEntityGrade(stats.getEntityGrade());
+
+        this.setDamage(this.getDamage() + t1.getDamage());
+        this.setManaUse(this.getManaUse() + t1.getManaUse());
+        this.setTickCooldown(this.getTickCooldown() + t1.getTickCooldown());
+
+    }
+
+    @Override
+    public int getHeal() {
+        return heal;
+    }
+
+    public void setHeal(int heal) {
+        this.heal = heal;
+    }
+
+    public int getAntiHeal() {
+        return antiHeal;
+    }
+
+    public void setAntiHeal(int antiHeal) {
+        this.antiHeal = antiHeal;
     }
 
     public int getLevel() {
@@ -175,7 +220,6 @@ public class TotalStats implements Stats{
         this.magicDefense = magicDefense;
     }
 
-    @Override
     public long getHealth() {
         return health;
     }

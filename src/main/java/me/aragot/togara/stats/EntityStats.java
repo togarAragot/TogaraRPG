@@ -11,6 +11,7 @@ public class EntityStats implements Stats{
     private double maxMana;
 
     private int defense;
+    private int heal;
     private int magicDefense;
     private long health;
     private int speed;
@@ -74,7 +75,6 @@ public class EntityStats implements Stats{
         this.magicDefense = magicDefense;
     }
 
-    @Override
     public long getHealth() {
         return health;
     }
@@ -86,6 +86,15 @@ public class EntityStats implements Stats{
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    @Override
+    public int getHeal() {
+        return heal;
+    }
+
+    public void setHeal(int heal){
+        this.heal = heal;
     }
 
     public void setSpeed(int speed) {

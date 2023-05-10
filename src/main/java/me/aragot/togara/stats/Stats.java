@@ -4,11 +4,11 @@ public interface Stats {
     //Armor stats
     int getDefense();
     int getMagicDefense();
-    long getHealth();
     int getSpeed();
 
     //General stats
     double getMana();
+    int getHeal();
 
     //Combat stats
     int getStrength();

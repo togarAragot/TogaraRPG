@@ -11,7 +11,8 @@ public class ItemStats implements Stats{
 
     private int defense;
     private int magicDefense;
-    private long health;
+    private int heal;
+    private int antiHeal;
     private int speed;
     private double mana;
     private int Strength;
@@ -86,17 +87,25 @@ public class ItemStats implements Stats{
     }
 
     @Override
-    public long getHealth() {
-        return health;
-    }
-
-    public void setHealth(long health) {
-        this.health = health;
+    public int getSpeed() {
+        return speed;
     }
 
     @Override
-    public int getSpeed() {
-        return speed;
+    public int getHeal() {
+        return heal;
+    }
+
+    public void setHeal(int heal){
+        this.heal = heal;
+    }
+
+    public int getAntiHeal(){
+        return this.antiHeal;
+    }
+
+    public void setAntiHeal(int antiHeal){
+        this.antiHeal = antiHeal;
     }
 
     public void setSpeed(int speed) {
