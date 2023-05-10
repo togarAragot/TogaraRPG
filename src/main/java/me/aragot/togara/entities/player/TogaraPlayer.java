@@ -21,6 +21,7 @@ public class TogaraPlayer extends TogaraEntity {
         super(player);
         this.stats = new EntityStats();
         this.stats.setHealth((long) (player.getHealth() * 5));
+        this.stats.setDamage(5L);
         this.stats.setMaxHealth((long) (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 5L));
         this.stats.setCritDamage(100);
         this.stats.setCritChance(15);

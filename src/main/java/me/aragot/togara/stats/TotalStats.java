@@ -71,6 +71,7 @@ public class TotalStats implements Stats{
         totalStats.setMagicPenetration(stats.getMagicPenetration());
         totalStats.setArmorPenetration(stats.getArmorPenetration());
         totalStats.setSwingRange(stats.getSwingRange());
+        totalStats.setDamage(stats.getDamage());
 
         totalStats.setLevel(stats.getLevel());
         totalStats.setEntityGrade(stats.getEntityGrade());

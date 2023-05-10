@@ -10,6 +10,7 @@ public class EntityStats implements Stats{
     private long maxHealth;
     private double maxMana;
 
+    private long damage;
     private int defense;
     private int heal;
     private int magicDefense;
@@ -99,6 +100,14 @@ public class EntityStats implements Stats{
 
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public void setDamage(long damage){
+        this.damage = damage;
+    }
+
+    public long getDamage(){
+        return this.damage;
     }
 
     @Override
