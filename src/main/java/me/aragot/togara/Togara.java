@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import me.aragot.togara.commands.StorageCommand;
 import me.aragot.togara.commands.TestCommand;
+import me.aragot.togara.commands.TogaraGiveCommand;
 import me.aragot.togara.commands.TogaraKillCommand;
 import me.aragot.togara.entities.EntityHandler;
 import me.aragot.togara.items.ItemHandler;
@@ -58,7 +59,7 @@ public final class Togara extends JavaPlugin {
         this.getCommand("test").setExecutor(new TestCommand());
         this.getCommand("tkill").setExecutor(new TogaraKillCommand());
         this.getCommand("storage").setExecutor(new StorageCommand());
-
+        this.getCommand("tgive").setExecutor(new TogaraGiveCommand());
         manager.registerEvents(new EntitySpawnEvent() , this);
         manager.registerEvents(new TickListener(), this);
         manager.registerEvents(new DamageListener(), this);
