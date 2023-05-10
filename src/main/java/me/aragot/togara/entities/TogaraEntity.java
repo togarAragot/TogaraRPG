@@ -1,13 +1,14 @@
 package me.aragot.togara.entities;
 
 import me.aragot.togara.Togara;
+import me.aragot.togara.items.TogaraItem;
 import me.aragot.togara.stats.EntityStats;
 import me.aragot.togara.stats.TotalStats;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.EntityEquipment;
 
 public class TogaraEntity {
 
@@ -15,6 +16,7 @@ public class TogaraEntity {
     private LivingEntity entity;
     private ArmorStand healthTag;
 
+    public TotalStats totalStats;
     public EntityStats stats;
 
     public TogaraEntity(Player player){
@@ -40,6 +42,8 @@ public class TogaraEntity {
 
     public void spawnHealthTag(){
         Location location = entity.getLocation().add(0, entity.getHeight(), 0);
+        calculateTotalStats();
+        this.totalStats.setHealth(this.totalStats.getMaxHealth());
         this.healthTag = (ArmorStand) entity.getWorld().spawn(location, ArmorStand.class, (armorStand -> {
             armorStand.setInvulnerable(true);
             armorStand.setMarker(true);
@@ -51,9 +55,7 @@ public class TogaraEntity {
     }
 
     public Component getHealthString(){
-
-        MiniMessage mm = MiniMessage.miniMessage();
-        return mm.deserialize("<gray>[<yellow>" + this.stats.getLevel() + " ★</yellow>]</gray> <red>" + entityName + "<green> " + this.stats.getHealth() + "<white> / </white>" + this.stats.getMaxHealth() + "</green> ❤</red>");
+        return Togara.mm.deserialize("<gray>[<yellow>" + this.stats.getLevel() + " ★</yellow>]</gray> <red>" + entityName + "<green> " + this.totalStats.getHealth() + "<white> / </white>" + this.totalStats.getMaxHealth() + "</green> ❤</red>");
     }
 
     public void tick() {
@@ -70,16 +72,18 @@ public class TogaraEntity {
         this.healthTag.teleport(entity.getLocation().add(0, entity.getHeight(), 0));
         this.healthTag.customName(getHealthString());
     }
+
     public void damage(TogaraEntity damager){
         this.entity.setHealth(this.entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         long totalDamage = getFinalDamage(damager.getTotalStats());
 
         new DamageDisplay(this.entity.getWorld(), this.entity.getEyeLocation(), totalDamage); //Declare Type
 
-        this.stats.setHealth(this.stats.getHealth() - totalDamage);
-        if(this.stats.getHealth() <= 0){
+        this.totalStats.setHealth(this.totalStats.getHealth() - totalDamage);
+        if(this.totalStats.getHealth() <= 0){
             entity.setHealth(0);
         }
+        Togara.entityHandler.damageQueue.remove(this.entity);
     }
 
     public void naturalDamage(long rawDamage){
@@ -87,18 +91,62 @@ public class TogaraEntity {
 
         new DamageDisplay(this.entity.getWorld(), this.entity.getEyeLocation(), rawDamage);
 
-        this.stats.setHealth(this.stats.getHealth() - rawDamage);
-        if(this.stats.getHealth() <= 0){
+        this.totalStats.setHealth(this.totalStats.getHealth() - rawDamage);
+        if(this.totalStats.getHealth() <= 0){
             entity.setHealth(0);
         }
     }
 
-    public long getFinalDamage(TotalStats stats){
+    public long getFinalDamage(TotalStats damager) {
+        DamageType type = Togara.entityHandler.damageQueue.get(this);
+        long damage = damager.getDamage();
+        switch (type) {
+            case MAGIC:
+                double maxMana = damager.getMaxMana();
+                double manaUse = damager.getManaUse();
+                int magicDefense = this.totalStats.getMagicDefense();
+                int magicPenetration = damager.getMagicPenetration();
 
+                double manaMultiplicator = maxMana/manaUse;
+                damage = Math.round(damage * manaMultiplicator);
+                magicDefense = magicDefense - magicPenetration;
+                if (magicDefense > 0) damage = Math.round(damage / ((magicDefense / 100) + 1));
+                else if (magicDefense < 0) damage = damage * ((magicDefense / -100) + 1);
+                return damage;
+            case PHYSICAL:
+                int defense = this.totalStats.getDefense();
+                int strength = damager.getStrength();
+                int critDamage = damager.getCritDamage();
+                int critChance = damager.getCritChance();
+                int armorPenetration = damager.getArmorPenetration();
+
+                damage = Math.round(damage * ((strength / 100) + 1));
+                int rolled = (int) Math.floor(Math.random() * 100);
+                if (critChance >= rolled) damage = damage * ((critDamage / 100) + 1);
+
+                defense = defense - armorPenetration;
+                if (defense > 0) damage = Math.round(damage / ((defense / 100) + 1));
+                else if (defense < 0) damage = damage * ((defense / -100) + 1);
+                return damage;
+            default:
+                return damage;
+        }
     }
 
     public TotalStats getTotalStats(){
+        return this.totalStats;
+    }
 
+    public void calculateTotalStats(){
+        EntityEquipment equipment = this.entity.getEquipment();
+        TotalStats totalStats = TotalStats.of(this.stats);
+        totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getItemInMainHand())));
+        totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getItemInOffHand())));
+        totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getHelmet())));
+        totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getChestplate())));
+        totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getLeggings())));
+        totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getBoots())));
+        this.totalStats = totalStats;
     }
 
     public ArmorStand getHealthTag() {
