@@ -3,6 +3,7 @@ package me.aragot.togara.listeners;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import me.aragot.togara.Togara;
+import me.aragot.togara.entities.DamageType;
 import me.aragot.togara.items.TogaraItem;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -40,7 +41,7 @@ public class PlayerListener implements Listener {
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent e){
         Togara.playerHandler.addPlayer(e.getPlayer());
     }
@@ -53,6 +54,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerHitEvent(PrePlayerAttackEntityEvent e){
         if(e.getAttacked() instanceof Mob){
+            Togara.entityHandler.damageQueue.put(Togara.entityHandler.getTogaraEntityByEntity(e.getAttacked()), DamageType.PHYSICAL);
             Togara.entityHandler.attackEntity(e.getPlayer(), (Mob) e.getAttacked());
             e.setCancelled(true);
         }
