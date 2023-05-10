@@ -101,8 +101,9 @@ public class TogaraItem {
         ArrayList<Component> stats = new ArrayList<>();
         if(itemStats.getDefense() != 0) stats.add(Togara.mm.deserialize("<blue>Defense: " + itemStats.getDefense() + "</blue>"));
         if(itemStats.getMagicDefense() != 0) stats.add(Togara.mm.deserialize("<blue>Magic Defense: " + itemStats.getMagicDefense() + "</blue>"));
-        if(itemStats.getMaxHealth() != 0) stats.add(Togara.mm.deserialize("<blue>Max Health: +" + itemStats.getHealth() + "</blue>"));
-        if(itemStats.getHealth() != 0) stats.add(Togara.mm.deserialize("<blue>Heal: " + itemStats.getHealth() + "</blue>"));
+        if(itemStats.getMaxHealth() != 0) stats.add(Togara.mm.deserialize("<blue>Max Health: +" + itemStats.getMaxHealth() + "</blue>"));
+        if(itemStats.getHeal() != 0) stats.add(Togara.mm.deserialize("<blue>Heal: " + itemStats.getHeal() + "</blue>"));
+        if(itemStats.getAntiHeal() != 0) stats.add(Togara.mm.deserialize("<blue>Anti-Heal: " + itemStats.getAntiHeal() + "</blue>"));
         if(itemStats.getSpeed() != 0) stats.add(Togara.mm.deserialize("<blue>Speed: " + itemStats.getSpeed() + "</blue>"));
         if(itemStats.getDamage() != 0) stats.add(Togara.mm.deserialize("<blue>Damage: " + itemStats.getDamage() + "</blue>"));
         if(itemStats.getMaxMana() != 0) stats.add(Togara.mm.deserialize("<blue>Max Mana: +" + itemStats.getMana() + "</blue>"));
@@ -121,13 +122,16 @@ public class TogaraItem {
 
     public static ItemStats getItemStats(ItemStack stack){
         ItemStats stats = new ItemStats();
+        if(stack == null) return new ItemStats();
         ItemMeta meta = stack.getItemMeta();
+        if(meta == null) return new ItemStats();
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
         stats.setDefense(data.getOrDefault(new NamespacedKey(Togara.instance, "defense"), PersistentDataType.INTEGER, 0));
         stats.setMagicDefense(data.getOrDefault(new NamespacedKey(Togara.instance, "magicDefense"), PersistentDataType.INTEGER, 0));
         stats.setMaxHealth(data.getOrDefault(new NamespacedKey(Togara.instance, "maxHealth"), PersistentDataType.LONG, 0L));
-        stats.setHealth(data.getOrDefault(new NamespacedKey(Togara.instance, "health"), PersistentDataType.LONG, 0L));
+        stats.setHeal(data.getOrDefault(new NamespacedKey(Togara.instance, "heal"), PersistentDataType.INTEGER, 0));
+        stats.setAntiHeal(data.getOrDefault(new NamespacedKey(Togara.instance, "antiHeal"), PersistentDataType.INTEGER, 0));
         stats.setSpeed(data.getOrDefault(new NamespacedKey(Togara.instance, "speed"), PersistentDataType.INTEGER, 0));
         stats.setDamage(data.getOrDefault(new NamespacedKey(Togara.instance, "damage"), PersistentDataType.LONG, 0L));
         stats.setMaxMana(data.getOrDefault(new NamespacedKey(Togara.instance, "maxMana"), PersistentDataType.DOUBLE, 0d));
