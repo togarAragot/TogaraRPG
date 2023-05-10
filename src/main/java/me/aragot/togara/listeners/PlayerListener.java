@@ -1,5 +1,6 @@
 package me.aragot.togara.listeners;
 
+import io.papermc.paper.event.player.PlayerArmSwingEvent;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import me.aragot.togara.Togara;
@@ -11,12 +12,13 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.Vector;
 
 public class PlayerListener implements Listener {
 
@@ -58,6 +60,15 @@ public class PlayerListener implements Listener {
             Togara.entityHandler.attackEntity(e.getPlayer(), (Mob) e.getAttacked());
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerInteract(PlayerInteractEvent e){
+        if(!e.getAction().equals(Action.LEFT_CLICK_AIR)) return;
+        Vector lookVec = e.getPlayer().getEyeLocation().getDirection();
+        Togara.logger.info("x: " +  lookVec.getX() + " y: " + lookVec.getY() + " Z: " + lookVec.getZ());
+        lookVec.normalize();
+        Togara.logger.info("x: " +  lookVec.getX() + " y: " + lookVec.getY() + " Z: " + lookVec.getZ());
 
     }
 
