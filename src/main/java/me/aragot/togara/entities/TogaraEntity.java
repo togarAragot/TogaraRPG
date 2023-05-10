@@ -33,14 +33,15 @@ public class TogaraEntity {
         spawnHealthTag();
     }
 
-    public TogaraEntity(String entityName, LivingEntity entity, EntityStats stats){
-        this.entity = entity;
-        this.stats = stats;
+    public TogaraEntity(String entityName){
         this.entityName = entityName;
-        spawnHealthTag();
+        Togara.entityHandler.addTogaraEntity(this);
     }
 
+    public void spawn(){}
+
     public void spawnHealthTag(){
+        spawn();
         Location location = entity.getLocation().add(0, entity.getHeight(), 0);
         calculateTotalStats();
         this.totalStats.setHealth(this.totalStats.getMaxHealth());
@@ -100,6 +101,7 @@ public class TogaraEntity {
     public long getFinalDamage(TotalStats damager) {
         DamageType type = Togara.entityHandler.damageQueue.get(this);
         long damage = damager.getDamage();
+        Togara.logger.info("damage before: " + damage);
         switch (type) {
             case MAGIC:
                 double maxMana = damager.getMaxMana();
@@ -111,7 +113,7 @@ public class TogaraEntity {
                 damage = Math.round(damage * manaMultiplicator);
                 magicDefense = magicDefense - magicPenetration;
                 if (magicDefense > 0) damage = Math.round(damage / ((magicDefense / 100) + 1));
-                else if (magicDefense < 0) damage = damage * ((magicDefense / -100) + 1);
+                else if (magicDefense < 0) damage = Math.round(damage * ((magicDefense / -100) + 1));
                 return damage;
             case PHYSICAL:
                 int defense = this.totalStats.getDefense();
@@ -122,11 +124,13 @@ public class TogaraEntity {
 
                 damage = Math.round(damage * ((strength / 100) + 1));
                 int rolled = (int) Math.floor(Math.random() * 100);
-                if (critChance >= rolled) damage = damage * ((critDamage / 100) + 1);
+                Togara.logger.info("Damager crit chance: " + damager.getCritChance());
+                Togara.logger.info("Crit chance hit: " + rolled);
+                if (critChance >= rolled) damage = Math.round(damage * ((critDamage / 100) + 1));
 
                 defense = defense - armorPenetration;
                 if (defense > 0) damage = Math.round(damage / ((defense / 100) + 1));
-                else if (defense < 0) damage = damage * ((defense / -100) + 1);
+                else if (defense < 0) damage = Math.round(damage * ((defense / -100) + 1));
                 return damage;
             default:
                 return damage;
@@ -146,6 +150,7 @@ public class TogaraEntity {
         totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getChestplate())));
         totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getLeggings())));
         totalStats.combine(TotalStats.of(TogaraItem.getItemStats(equipment.getBoots())));
+
         this.totalStats = totalStats;
     }
 

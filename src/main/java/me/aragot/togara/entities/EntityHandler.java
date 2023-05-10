@@ -25,12 +25,14 @@ public class EntityHandler {
     public void attackEntity(Player player, Mob entity){
         TogaraPlayer tPlayer = Togara.playerHandler.getTogaraPlayer(player);
         TogaraEntity tEntity = getTogaraEntityByEntity(entity);
+        if(tEntity == null) return;
         tEntity.damage(tPlayer);
+        entity.damage(0);
     }
 
     public void damage(EntityDamageEvent e){
         TogaraEntity entity = getTogaraEntityByEntity(e.getEntity());
-        if(entity == null) return;
+        if(e.getDamage() == 0 || entity == null) return;
         entity.naturalDamage((long) e.getDamage());
     }
 
@@ -56,6 +58,11 @@ public class EntityHandler {
         entityList.add(tPlayer);
     }
 
+    public void addTogaraEntity(TogaraEntity entity){
+        if(entityList.contains(entity)) return;
+        entityList.add(entity);
+    }
+
     public void update(){
         for(TogaraEntity entity : entityList) {
             entity.tick();
@@ -71,6 +78,13 @@ public class EntityHandler {
 
     public void remove(TogaraEntity entity){
         toRemove.add(entity);
+    }
+
+    public boolean hasEntity(Entity entity){
+        for(TogaraEntity tEntity : entityList){
+            if(tEntity.getEntity().getEntityId() == entity.getEntityId()) return true;
+        }
+        return false;
     }
 
     public TogaraEntity getTogaraEntityByEntity(Entity entity){
