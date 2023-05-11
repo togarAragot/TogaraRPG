@@ -26,6 +26,7 @@ public class TogaraEntity {
     public TogaraEntity(LivingEntity entity){
         this.stats = new EntityStats();
         this.entity = entity;
+        this.stats.setDamage(5);
         this.stats.setHealth((long) (entity.getHealth() * 5));
         this.stats.setMaxHealth((long) (entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 5L));
         entityName = entity.getName();

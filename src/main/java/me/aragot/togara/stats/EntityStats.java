@@ -10,6 +10,7 @@ public class EntityStats implements Stats{
     private long maxHealth;
     private double maxMana;
 
+    private int regen;
     private long damage;
     private int defense;
     private int heal;
@@ -94,6 +95,15 @@ public class EntityStats implements Stats{
         return heal;
     }
 
+    @Override
+    public int getRegen() {
+        return regen;
+    }
+
+    public void setRegen(int regen){
+        this.regen = regen;
+    }
+
     public void setHeal(int heal){
         this.heal = heal;
     }
@@ -172,4 +182,6 @@ public class EntityStats implements Stats{
     public void setSwingRange(double swingRange) {
         this.swingRange = swingRange;
     }
+
+
 }

@@ -47,6 +47,7 @@ public class TogaraItem {
         if(stats.getDefense() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "defense"), PersistentDataType.INTEGER, stats.getDefense());
         if(stats.getMagicDefense() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "magicDefense"), PersistentDataType.INTEGER, stats.getMagicDefense());
         if(stats.getMaxHealth() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "maxHealth"), PersistentDataType.LONG, stats.getMaxHealth());
+        if(stats.getRegen() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "regen"), PersistentDataType.INTEGER, stats.getRegen());
         if(stats.getHeal() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "heal"), PersistentDataType.INTEGER, stats.getHeal());
         if(stats.getAntiHeal() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "antiHeal"), PersistentDataType.INTEGER, stats.getAntiHeal());
         if(stats.getSpeed() != 0) meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "speed"), PersistentDataType.INTEGER, stats.getSpeed());
@@ -140,6 +141,7 @@ public class TogaraItem {
         if(itemStats.getDefense() != 0) stats.add(Togara.mm.deserialize("<gray>Defense: <yellow>" + itemStats.getDefense() + "</yellow></gray>").decoration(TextDecoration.ITALIC, false));
         if(itemStats.getMagicDefense() != 0) stats.add(Togara.mm.deserialize("<gray>Magic Defense: <dark_purple>" + itemStats.getMagicDefense() + "</dark_purple></gray>").decoration(TextDecoration.ITALIC, false));
         if(itemStats.getMaxHealth() != 0) stats.add(Togara.mm.deserialize("<gray>Max Health: <green>+" + itemStats.getMaxHealth() + "</green></gray>").decoration(TextDecoration.ITALIC, false));
+        if(itemStats.getRegen() != 0) stats.add(Togara.mm.deserialize("<gray>Regen: <green>" + itemStats.getRegen() + "</green></gray>").decoration(TextDecoration.ITALIC, false));
         if(itemStats.getHeal() != 0) stats.add(Togara.mm.deserialize("<gray>Heal: <green>" + itemStats.getHeal() + "</green></gray>").decoration(TextDecoration.ITALIC, false));
         if(itemStats.getAntiHeal() != 0) stats.add(Togara.mm.deserialize("<gray>Anti-Heal: <red>" + itemStats.getAntiHeal() + "</red></gray>").decoration(TextDecoration.ITALIC, false));
         if(itemStats.getSpeed() != 0) stats.add(Togara.mm.deserialize("<gray>Speed: <white>" + itemStats.getSpeed() + "</white></gray>").decoration(TextDecoration.ITALIC, false));
@@ -168,6 +170,7 @@ public class TogaraItem {
         stats.setDefense(data.getOrDefault(new NamespacedKey(Togara.instance, "defense"), PersistentDataType.INTEGER, 0));
         stats.setMagicDefense(data.getOrDefault(new NamespacedKey(Togara.instance, "magicDefense"), PersistentDataType.INTEGER, 0));
         stats.setMaxHealth(data.getOrDefault(new NamespacedKey(Togara.instance, "maxHealth"), PersistentDataType.LONG, 0L));
+        stats.setRegen(data.getOrDefault(new NamespacedKey(Togara.instance, "regen"), PersistentDataType.INTEGER, 0));
         stats.setHeal(data.getOrDefault(new NamespacedKey(Togara.instance, "heal"), PersistentDataType.INTEGER, 0));
         stats.setAntiHeal(data.getOrDefault(new NamespacedKey(Togara.instance, "antiHeal"), PersistentDataType.INTEGER, 0));
         stats.setSpeed(data.getOrDefault(new NamespacedKey(Togara.instance, "speed"), PersistentDataType.INTEGER, 0));
@@ -191,7 +194,11 @@ public class TogaraItem {
         stack.setAmount(amount);
         stack.setItemMeta(getDefaultItemMeta());
         //Doesnt work because itemmeta was not set again.
-        if(this instanceof TogaraWeapon) stack.getItemMeta().getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "uuid"), PersistentDataType.STRING, UUID.randomUUID().toString());
+        if(this instanceof TogaraWeapon){
+            ItemMeta meta = stack.getItemMeta();
+            meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "uuid"), PersistentDataType.STRING, UUID.randomUUID().toString());
+            stack.setItemMeta(meta);
+        }
         player.getInventory().addItem(stack);
     }
 
@@ -234,7 +241,7 @@ public class TogaraItem {
     }
 
     public boolean isStackable(){
-        if(material.getMaxStackSize() == 1) return false;
+        if(material.getMaxStackSize() == 1 || this instanceof TogaraWeapon) return false;
         return true;
     }
 

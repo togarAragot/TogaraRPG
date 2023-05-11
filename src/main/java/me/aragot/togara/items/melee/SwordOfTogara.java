@@ -22,6 +22,7 @@ public class SwordOfTogara extends TogaraWeapon {
         stats.setCritChance(35);
         stats.setCritDamage(100);
         stats.setArmorPenetration(100);
+        stats.setMaxHealth(100);
         stats.setSwingRange(1);
         Togara.itemHandler.itemList.add(new SwordOfTogara());
     }

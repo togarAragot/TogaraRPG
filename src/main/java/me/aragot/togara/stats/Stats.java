@@ -9,6 +9,7 @@ public interface Stats {
     //General stats
     double getMana();
     int getHeal();
+    int getRegen();
 
     //Combat stats
     int getStrength();

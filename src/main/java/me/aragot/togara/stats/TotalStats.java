@@ -14,6 +14,7 @@ public class TotalStats implements Stats{
     private double manaUse;
     private int tickCooldown;
 
+    private int regen;
     private int heal;
     private int antiHeal;
     private int defense;
@@ -299,5 +300,14 @@ public class TotalStats implements Stats{
 
     public void setSwingRange(double swingRange) {
         this.swingRange = swingRange;
+    }
+
+    @Override
+    public int getRegen() {
+        return regen;
+    }
+
+    public void setRegen(int regen){
+        this.regen = regen;
     }
 }

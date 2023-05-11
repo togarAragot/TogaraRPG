@@ -9,6 +9,7 @@ public class ItemStats implements Stats{
     private long maxHealth;
     private double maxMana;
 
+    private int regen;
     private int defense;
     private int magicDefense;
     private int heal;
@@ -173,5 +174,14 @@ public class ItemStats implements Stats{
 
     public void setSwingRange(double swingRange) {
         this.swingRange = swingRange;
+    }
+
+    @Override
+    public int getRegen() {
+        return regen;
+    }
+
+    public void setRegen(int regen){
+        this.regen = regen;
     }
 }

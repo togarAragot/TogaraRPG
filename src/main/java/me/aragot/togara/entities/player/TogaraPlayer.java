@@ -15,6 +15,7 @@ import java.util.UUID;
 public class TogaraPlayer extends TogaraEntity {
 
     private Player player;
+    private TotalStats lastTotalStats;
     private int refreshVars;
 
     public TogaraPlayer(Player player){
@@ -33,10 +34,12 @@ public class TogaraPlayer extends TogaraEntity {
 
     @Override
     public void tick(){
-        player.sendActionBar(Togara.mm.deserialize("<red>" + this.totalStats.getHealth() + " / " + this.totalStats.getMaxHealth() + " ❤</red>       <aqua>" + this.totalStats.getMana() + " / " + this.totalStats.getMaxMana() + "</aqua>"));
+        player.sendActionBar(Togara.mm.deserialize("<red>" + this.totalStats.getHealth() + " / " + this.totalStats.getMaxHealth() + " ❤</red>       <aqua>" + this.totalStats.getMana() + " / " + this.totalStats.getMaxMana() + "☉</aqua>"));
 
         if(refreshVars == 10) {
+            lastTotalStats = this.totalStats;
             calculateTotalStats();
+            regen();
             refreshVars = 0;
         }
         refreshVars++;
@@ -55,6 +58,29 @@ public class TogaraPlayer extends TogaraEntity {
         this.totalStats = totalStats;
     }
 
+    public void regen(){
+        TotalStats totalStats = this.totalStats;
+
+        if(lastTotalStats != null && totalStats.getMaxHealth() != lastTotalStats.getMaxHealth()){
+            if(totalStats.getHealth() == lastTotalStats.getMaxHealth()){
+                heal(totalStats.getMaxHealth());
+                return;
+            }
+        }
+        if(totalStats.getHealth() == totalStats.getMaxHealth()) return;
+        long amount = Math.round(totalStats.getMaxHealth() / 20);
+        amount = amount * (totalStats.getRegen() / 100 + 1);
+        heal(amount);
+    }
+
+    public void heal(long amount){
+
+        if(totalStats.getMaxHealth() <= stats.getHealth() + amount){
+            stats.setHealth(totalStats.getMaxHealth());
+            return;
+        }
+        stats.setHealth(stats.getHealth() + amount);
+    }
     public Player getPlayer() {
         return player;
     }
