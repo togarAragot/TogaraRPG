@@ -1,19 +1,26 @@
 package me.aragot.togara.entities.enemies;
 
+import me.aragot.togara.Togara;
 import me.aragot.togara.entities.TogaraEntity;
 import me.aragot.togara.items.Rarity;
 import me.aragot.togara.stats.EntityStats;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Zombie;
+import org.bukkit.persistence.PersistentDataType;
+
+//This is an example class of an Entity, Entities are registered in initCustomEntities of EntityHandler
 
 public class TestMob extends TogaraEntity {
 
     private Location spawnLocation;
 
+    public TestMob(){
+        super("TEST_MOB", "Test Mob", true);
+    }
+
     public TestMob(Location location){
-        super("Test MOB");
+        super("TEST_MOB", "Test Mob", false);
         this.spawnLocation = location;
         spawnHealthTag();
     }
@@ -31,6 +38,12 @@ public class TestMob extends TogaraEntity {
             this.setEntity(zombie);
             zombie.setAI(false);
             zombie.setGravity(false);
+            zombie.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "entityId"), PersistentDataType.STRING, "TEST_MOB");
         }));
+    }
+
+    @Override
+    public void spawn(Location location){
+        new TestMob(location);
     }
 }
