@@ -24,7 +24,7 @@ public enum ItemType {
     MISCELLANEOUS(6);
 
     public static final int size = ItemType.values().length;
-    private int i;
+    private final int i;
 
     ItemType(int i){
         this.i = i;
@@ -44,5 +44,33 @@ public enum ItemType {
         ArrayList<ItemType> usableList = new ArrayList<>();
         for (ItemType type : ItemType.values()) if(type.getIndex() != -1) usableList.add(type);
         return usableList.toArray(new ItemType[0]);
+    }
+
+    public static boolean isTool(ItemType type){
+        switch(type){
+            case AXE:
+            case PICKAXE:
+            case SHOVEL:
+            case HOE:
+            case TRIDENT:
+            case SWORD:
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isArmor(ItemType type){
+        switch(type){
+            case HELMET:
+            case CHESTPLATE:
+            case LEGGINGS:
+            case BOOTS:
+                return true;
+
+            default:
+                return false;
+        }
     }
 }
