@@ -20,6 +20,7 @@ public class TogaraKillCommand implements CommandExecutor {
                     ((Mob) entity).setHealth(0);
                 }
             }
+            return true;
         }
 
         return false;
