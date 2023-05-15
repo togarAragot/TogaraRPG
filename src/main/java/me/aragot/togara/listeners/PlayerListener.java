@@ -1,6 +1,5 @@
 package me.aragot.togara.listeners;
 
-import io.papermc.paper.event.player.PlayerArmSwingEvent;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import me.aragot.togara.Togara;
@@ -8,13 +7,8 @@ import me.aragot.togara.entities.DamageType;
 import me.aragot.togara.entities.TogaraEntity;
 import me.aragot.togara.entities.player.TogaraPlayer;
 import me.aragot.togara.items.TogaraItem;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -22,19 +16,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
+import org.bukkit.util.RayTraceResult;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Predicate;
 
 public class PlayerListener implements Listener {
 
@@ -66,6 +56,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent e){
+        Togara.entityHandler.register(e.getPlayer().getWorld());
         Togara.playerHandler.addPlayer(e.getPlayer());
     }
 
@@ -79,6 +70,7 @@ public class PlayerListener implements Listener {
         hasRecentlyAttacked.add(e.getPlayer());
         if(e.getAttacked() instanceof Mob){
             Togara.entityHandler.damageQueue.put(Togara.entityHandler.getTogaraEntityByEntity(e.getAttacked()), DamageType.PHYSICAL);
+            //Red Enemies = no damage
             Togara.entityHandler.attackEntity(e.getPlayer(), (Mob) e.getAttacked());
             e.setCancelled(true);
         }
@@ -89,48 +81,25 @@ public class PlayerListener implements Listener {
         hasRecentlyLeftClicked.add(e.getPlayer());
         if(!e.getAction().equals(Action.LEFT_CLICK_AIR)) return;
         TogaraPlayer p = Togara.playerHandler.getTogaraPlayer(e.getPlayer());
-        if(p.getTotalStats().getSwingRange() == 0) return;
+        if(p.getTotalStats().getSwingRange() == 3) return;
 
-        Entity entity = getEntityInSight(e.getPlayer(), 3 + p.getTotalStats().getSwingRange());
+        Entity entity = getEntityInSight(e.getPlayer(), p.getTotalStats().getSwingRange());
         if(entity == null) return;
         TogaraEntity togaraEntity = Togara.entityHandler.getTogaraEntityByEntity(entity);
         if(togaraEntity == null) return;
 
         Togara.entityHandler.damageQueue.put(togaraEntity, DamageType.PHYSICAL);
-        togaraEntity.damage(p);
+        Togara.entityHandler.attackEntity(e.getPlayer(), (Mob) entity);
     }
 
     private Entity getEntityInSight(Player p, double range) {
 
-        Vector playerLookDir = p.getEyeLocation().getDirection();
+        Predicate<Entity> isMob = x -> (x instanceof Mob);
+        World world = p.getWorld();
+        RayTraceResult result = world.rayTraceEntities(p.getEyeLocation(), p.getEyeLocation().getDirection(), range, isMob);
+        if(result == null || result.getHitEntity() == null) return null;
 
-        Vector playerEyeLocation = p.getEyeLocation().toVector();
-
-        Entity bestEntity = null;
-
-        float bestAngle = 0.25f;
-
-
-        for (Entity e : p.getNearbyEntities(range, range, range)) {
-
-            if (!p.hasLineOfSight(e)) continue;
-            if(!(e instanceof Mob)) continue;
-
-            Vector entityLoc = e.getLocation().toVector();
-            Vector entityMid = entityLoc.setY(entityLoc.getY() + (e.getHeight() / 2));
-
-            Vector playerToEntity = entityLoc.subtract(playerEyeLocation);
-            float currentAngle = playerLookDir.angle(entityMid);
-            if (currentAngle < bestAngle) {
-
-                bestAngle = playerLookDir.angle(playerToEntity);
-
-                bestEntity = e;
-
-            }
-
-        }
-        return bestEntity;
+        return result.getHitEntity();
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -154,9 +123,9 @@ public class PlayerListener implements Listener {
         }
     }
 
-    private static ArrayList<Player> hasRecentlyLeftClicked = new ArrayList<>();
-    private static ArrayList<Player> hasRecentlyAttacked = new ArrayList<>();
-    private static ArrayList<Player> hasRecentlyDropped = new ArrayList<>();
+    private static final ArrayList<Player> hasRecentlyLeftClicked = new ArrayList<>();
+    private static final ArrayList<Player> hasRecentlyAttacked = new ArrayList<>();
+    private static final ArrayList<Player> hasRecentlyDropped = new ArrayList<>();
 
     public static void clearLists(){
         hasRecentlyLeftClicked.clear();
