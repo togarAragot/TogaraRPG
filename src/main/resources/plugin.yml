@@ -24,3 +24,7 @@ commands:
     description: Opens your Storage
     usage: /storage <page>
     permission: togara.storage
+  tsummon:
+    description: This summons a custom entity
+    usage: /tsummon <entityId>
+    permission: togara.tsummon
