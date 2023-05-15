@@ -12,8 +12,7 @@ public class TestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player){
-            new TestMob(((Player) sender).getLocation());
-            sender.sendMessage("Spawned test Mob");
+            sender.sendMessage("this is a test");
             return true;
         }
         return false;
