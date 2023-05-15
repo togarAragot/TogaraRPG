@@ -89,10 +89,10 @@ public class TogaraItem {
         meta.setUnbreakable(true);
         meta.getPersistentDataContainer().set(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING, itemId);
         ArrayList<Component> lore = new ArrayList<>();
-        if(this instanceof TogaraWeapon){
-            ItemStats stats = ((TogaraWeapon) this).getItemStats();
+        if(this instanceof Stattable){
+            ItemStats stats = ((Stattable) this).getItemStats();
             meta = setItemData(meta, stats);
-            lore.addAll(getStatComponents(((TogaraWeapon) this).getItemStats()));
+            lore.addAll(getStatComponents(((Stattable) this).getItemStats()));
         }
         lore.addAll(getDescription());
         lore.add(mm.deserialize("<" + color + "><b>" + rarity.name() + " " + type.name() + "</b></" + color + ">" ).decoration(TextDecoration.ITALIC, false));
@@ -123,7 +123,7 @@ public class TogaraItem {
         meta.displayName(mm.deserialize("<" + color + ">" + displayName + "</" + color + ">").decoration(TextDecoration.ITALIC, false));
         meta.setUnbreakable(true);
         ArrayList<Component> lore = new ArrayList<>();
-        if(item instanceof TogaraWeapon) lore.addAll(item.getStatComponents(getItemStats(stack)));
+        if(item instanceof Stattable) lore.addAll(item.getStatComponents(getItemStats(stack)));
         lore.addAll(item.getDescription());
         lore.add(mm.deserialize("<" + color + "><b>" + item.getRarity().name() + " " + item.getType().name() + "</b></" + color + ">" ).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
@@ -241,8 +241,7 @@ public class TogaraItem {
     }
 
     public boolean isStackable(){
-        if(material.getMaxStackSize() == 1 || this instanceof TogaraWeapon) return false;
-        return true;
+        return material.getMaxStackSize() != 1 && !(this instanceof TogaraWeapon);
     }
 
     public void setRarity(Rarity rarity) {
