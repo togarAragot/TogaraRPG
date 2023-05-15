@@ -22,6 +22,7 @@ public class StorageCommand implements CommandExecutor {
             } else {
                 StorageGui.openStorageGui(player, Togara.storageManager.getStorage(player.getUniqueId()), 1);
             }
+            return true;
         }
 
         return false;
