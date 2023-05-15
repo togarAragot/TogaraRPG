@@ -2,8 +2,6 @@ package me.aragot.togara.storage;
 
 import me.aragot.togara.items.Rarity;
 import me.aragot.togara.items.ItemType;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
