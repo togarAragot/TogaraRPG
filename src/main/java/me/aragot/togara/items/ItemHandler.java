@@ -26,12 +26,26 @@ public class ItemHandler {
             ItemType type = getItemType(mat);
             Rarity rarity = getRarity(mat);
             TogaraItem item;
-            if(type == ItemType.SWORD){
+            if(ItemType.isTool(type)) {
                 ItemStats stats = new ItemStats();
                 double damage = 0;
-                for(AttributeModifier modifier : mat.getDefaultAttributeModifiers(EquipmentSlot.HAND).get(Attribute.GENERIC_ATTACK_DAMAGE)) damage = modifier.getAmount() + damage;
+                for (AttributeModifier modifier : mat.getDefaultAttributeModifiers(EquipmentSlot.HAND).get(Attribute.GENERIC_ATTACK_DAMAGE))
+                    damage = modifier.getAmount() + damage;
                 stats.setDamage((long) damage * 5);
-                item = new TogaraWeapon(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity, stats);
+                item = new TogaraWeapon(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type, rarity, stats);
+            } else if(ItemType.isArmor(type)){
+                ItemStats stats = new ItemStats();
+                double armor = 0;
+                for (AttributeModifier modifier : mat.getDefaultAttributeModifiers(EquipmentSlot.HEAD).get(Attribute.GENERIC_ARMOR))
+                    armor = modifier.getAmount() + armor;
+                for (AttributeModifier modifier : mat.getDefaultAttributeModifiers(EquipmentSlot.CHEST).get(Attribute.GENERIC_ARMOR))
+                    armor = modifier.getAmount() + armor;
+                for (AttributeModifier modifier : mat.getDefaultAttributeModifiers(EquipmentSlot.LEGS).get(Attribute.GENERIC_ARMOR))
+                    armor = modifier.getAmount() + armor;
+                for (AttributeModifier modifier : mat.getDefaultAttributeModifiers(EquipmentSlot.FEET).get(Attribute.GENERIC_ARMOR))
+                    armor = modifier.getAmount() + armor;
+                stats.setDefense((int) armor * 5);
+                item = new TogaraArmor(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type, rarity, stats);
             } else {
                 item = new TogaraItem(mat, mat.name().toUpperCase().replaceAll(" ", "_"), type,rarity);
             }
