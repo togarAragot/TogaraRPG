@@ -6,7 +6,6 @@ import me.aragot.togara.items.TogaraItem;
 import me.aragot.togara.stats.EntityStats;
 import me.aragot.togara.stats.TotalStats;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 
@@ -14,7 +13,7 @@ import java.util.UUID;
 
 public class TogaraPlayer extends TogaraEntity {
 
-    private Player player;
+    private final Player player;
     private TotalStats lastTotalStats;
     private int refreshVars;
 
@@ -28,13 +27,14 @@ public class TogaraPlayer extends TogaraEntity {
         this.stats.setCritChance(15);
         this.stats.setMaxMana(100);
         this.stats.setMana(100);
+        this.stats.setSwingRange(3);
         this.player = player;
         calculateTotalStats();
     }
 
     @Override
     public void tick(){
-        player.sendActionBar(Togara.mm.deserialize("<red>" + this.totalStats.getHealth() + " / " + this.totalStats.getMaxHealth() + " ❤</red>       <aqua>" + this.totalStats.getMana() + " / " + this.totalStats.getMaxMana() + "☉</aqua>"));
+        player.sendActionBar(Togara.mm.deserialize("<red>" + this.totalStats.getHealth() + " / " + this.totalStats.getMaxHealth() + " ❤</red>       <aqua>" + (int) this.totalStats.getMana() + " / " + (int) this.totalStats.getMaxMana() + "</aqua>"));
 
         if(refreshVars == 10) {
             lastTotalStats = this.totalStats;
