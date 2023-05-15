@@ -186,12 +186,10 @@ public class StorageGui implements Listener {
 
                 if(e.getClick().isLeftClick() && !e.getClick().isShiftClick()) toRemove.setAmount(1);
                 else if(e.getClick().isLeftClick() && e.getClick().isShiftClick()){
-                    if(amountOfItems < 64) toRemove.setAmount(amountOfItems);
-                    else toRemove.setAmount(64);
+                    toRemove.setAmount(Math.min(amountOfItems, 64));
                 }
                 else if(e.getClick().isRightClick() && !e.getClick().isShiftClick()){
-                    if(amountOfItems < 32) toRemove.setAmount(amountOfItems);
-                    else toRemove.setAmount(32);
+                    toRemove.setAmount(Math.min(amountOfItems, 32));
                 }
                 else if(e.getClick().isRightClick() && e.getClick().isShiftClick()) toRemove.setAmount(amountOfItems);
 
@@ -311,7 +309,10 @@ public class StorageGui implements Listener {
         String search = storage.getSearch();
 
         for(String itemId : storage.getItems().keySet()){
-            if(filter == Rarity.ALL || Togara.itemHandler.getRarity(itemId) == filter && itemType == ItemType.ALL || Togara.itemHandler.getItemType(itemId) == itemType){
+            if(filter == Rarity.ALL && itemType == ItemType.ALL ||
+                    Togara.itemHandler.getRarity(itemId) == filter && itemType == ItemType.ALL ||
+                    filter == Rarity.ALL && Togara.itemHandler.getItemType(itemId) == itemType ||
+                    Togara.itemHandler.getRarity(itemId) == filter && Togara.itemHandler.getItemType(itemId) == itemType){
                 if(itemId.replaceAll("_", " ").contains(search.toUpperCase())) itemIds.add(itemId);
             }
         }
