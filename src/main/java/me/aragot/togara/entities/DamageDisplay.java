@@ -19,12 +19,16 @@ public class DamageDisplay {
     private Location location;
     private int displayTicks = 12;
 
-    public DamageDisplay(World world, Location location, long damage){
+
+    public DamageDisplay(World world, DamageType type, Location location, long damage, boolean isCrit){
         this.world = world;
         this.location = location;
         this.textDisplay = (TextDisplay) world.spawnEntity(location, EntityType.TEXT_DISPLAY);
         this.textDisplay.setCustomNameVisible(true);
-        this.textDisplay.customName(MiniMessage.miniMessage().deserialize("<red>" + damage + "</red><dark_red>☫</dark_red>"));
+
+        if(!isCrit) this.textDisplay.customName(MiniMessage.miniMessage().deserialize("<red>⚔" + damage + "</red>"));
+        else if(type == DamageType.MAGICAL) this.textDisplay.customName(MiniMessage.miniMessage().deserialize("<red>-" + damage + "</red>"));
+        else this.textDisplay.customName(MiniMessage.miniMessage().deserialize("<gradient:red:gold>⚔" + damage + "</gradient>"));
         damageDisplays.add(this);
     }
 
