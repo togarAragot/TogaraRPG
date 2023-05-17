@@ -75,6 +75,14 @@ public class EntityHandler {
         }
 
     }
+
+    public void unregister(World world){
+        for(Entity entity : world.getEntities()) {
+            TogaraEntity tEntity = getTogaraEntityByEntity(entity);
+            if(tEntity == null) continue;
+            tEntity.getHealthTag().remove();
+        }
+    }
     public void unregister(){
         for(TogaraEntity entity : entityList){
             if(entity instanceof TogaraPlayer) continue;
