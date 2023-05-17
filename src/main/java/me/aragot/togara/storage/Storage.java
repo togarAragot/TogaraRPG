@@ -122,6 +122,7 @@ public class Storage {
             this.filter = Rarity.values()[filter.getIndex() - 1];
         } else this.filter = Rarity.values()[Rarity.values().length - 1];
     }
+
     public void lastItemType(){
         if(this.itemType.getIndex() > 0){
             this.itemType = ItemType.getStorageValues()[itemType.getIndex() - 1];

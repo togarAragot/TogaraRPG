@@ -24,8 +24,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class StorageGui implements Listener {
+
+    public static ArrayList<UUID> inSearch = new ArrayList<>();
 
     private static ItemStack filler;
     private static ItemStack nothing;
@@ -71,7 +74,7 @@ public class StorageGui implements Listener {
 
         lastPage = new ItemStack(Material.ARROW);
         meta = lastPage.getItemMeta();
-        meta.displayName(Togara.mm.deserialize("<yellow>Last Page</yellow>").decoration(TextDecoration.ITALIC, false));
+        meta.displayName(Togara.mm.deserialize("<yellow>Previous Page</yellow>").decoration(TextDecoration.ITALIC, false));
         lastPage.setItemMeta(meta);
 
         nextPage = new ItemStack(Material.ARROW);
@@ -139,6 +142,8 @@ public class StorageGui implements Listener {
                         loc.setY(-64);
                         loc.setZ(loc.getBlockZ());
                         player.sendBlockChange(loc, Material.OAK_SIGN.createBlockData());
+                        player.closeInventory(InventoryCloseEvent.Reason.OPEN_NEW);
+                        inSearch.add(e.getWhoClicked().getUniqueId());
                         new BukkitRunnable() {
                             @Override
                             public void run() {
@@ -209,6 +214,8 @@ public class StorageGui implements Listener {
         if(e.getInventory().getHolder() instanceof StorageHolder) Togara.storageManager.saveStorage(e.getPlayer().getUniqueId());
     }
 
+
+    //I think this event has to be called in StoragePacketHandler
     @EventHandler
     public void onSignEditEvent(SignChangeEvent e){
         Player player = e.getPlayer();
@@ -285,8 +292,8 @@ public class StorageGui implements Listener {
         ItemMeta itemTypeMeta = itemType.getItemMeta();
         itemTypeMeta.lore(getItemTypeLore(storage.getItemType()));
         ItemStack newItemType = itemType.clone();
-        itemType.setItemMeta(itemTypeMeta);
-        inventory.setItem(38, itemType);
+        newItemType.setItemMeta(itemTypeMeta);
+        inventory.setItem(38, newItemType);
 
         inventory.setItem(42, info);
 

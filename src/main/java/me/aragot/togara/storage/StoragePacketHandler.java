@@ -20,7 +20,8 @@ public class StoragePacketHandler {
         PacketContainer packet = event.getPacket();
         final String[] lines = event.getPacket().getStringArrays().getValues().get(0);
 
-        if(!lines[3].equalsIgnoreCase("to Search for")) return;
+        if(!lines[3].equalsIgnoreCase("to Search for") || !StorageGui.inSearch.contains(event.getPlayer().getUniqueId())) return;
+        StorageGui.inSearch.remove(event.getPlayer().getUniqueId());
         BlockPosition pos = event.getPacket().getBlockPositionModifier().getValues().get(0);
         Location loc = new Location(player.getWorld(), pos.getX(), pos.getY(), pos.getZ());
         storage.setSearch(lines[0]);
