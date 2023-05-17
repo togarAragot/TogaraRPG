@@ -4,17 +4,24 @@ import java.util.ArrayList;
 
 public enum ItemType {
 
+    WEAPON(-1),
     SWORD(-1),
     BOW(-1),
     TRIDENT(-1),
+
     PICKAXE(-1),
     SHOVEL(-1),
     HOE(-1),
     AXE(-1),
-    BOOTS(-1),
-    LEGGINGS(-1),
-    CHESTPLATE(-1),
+
+    ARMOR(-1),
     HELMET(-1),
+    CHESTPLATE(-1),
+    LEGGINGS(-1),
+    BOOTS(-1),
+
+    SPAWNAREA(-1),
+
     ALL(0),
     POTION(1),
     ARROW(2),
@@ -61,6 +68,18 @@ public enum ItemType {
         }
     }
 
+    public static boolean isWeapon(ItemType type){
+        switch(type){
+            case BOW:
+            case TRIDENT:
+            case SWORD:
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
     public static boolean isArmor(ItemType type){
         switch(type){
             case HELMET:
@@ -71,6 +90,23 @@ public enum ItemType {
 
             default:
                 return false;
+        }
+    }
+
+    public static ItemType getHeadType(ItemType type){
+
+        switch(type){
+            case BOW:
+            case TRIDENT:
+            case SWORD:
+                return WEAPON;
+            case HELMET:
+            case CHESTPLATE:
+            case LEGGINGS:
+            case BOOTS:
+                return ARMOR;
+            default:
+                return ALL;
         }
     }
 }
