@@ -28,3 +28,7 @@ commands:
     description: This summons a custom entity
     usage: /tsummon <entityId>
     permission: togara.tsummon
+  dealer:
+    description: This opens an ItemDealer Gui for the staff
+    usage: /dealer
+    permission: togara.dealer
