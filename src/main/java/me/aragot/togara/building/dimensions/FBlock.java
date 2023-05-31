@@ -1,4 +1,4 @@
-package me.aragot.togara.building;
+package me.aragot.togara.building.dimensions;
 
 import org.bukkit.Material;
 
@@ -7,6 +7,14 @@ public class FBlock {
     private FCoords fCoords;
 
     private String materialName;
+
+    private FCoords parent;
+
+    public FBlock(FCoords fCoords, String materialName, FCoords parent){
+        this.fCoords = fCoords;
+        this.materialName = materialName;
+        this.parent = parent;
+    }
 
     public FBlock(FCoords fCoords, String materialName){
         this.fCoords = fCoords;
@@ -27,6 +35,14 @@ public class FBlock {
 
     public int getF(){
         return fCoords.getF();
+    }
+
+    public FCoords getParent(){
+        return this.parent;
+    }
+
+    public boolean hasParent(){
+        return this.parent != null;
     }
 
     public FCoords getFCoords(){
