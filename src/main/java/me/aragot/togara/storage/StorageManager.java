@@ -31,7 +31,10 @@ public class StorageManager {
                 JsonReader reader = new JsonReader(new FileReader(file));
                 Storage storage = gson.fromJson(reader, Storage.class);
                 storages.put(storage.getOwner(), storage);
+                reader.close();
             } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
