@@ -1,4 +1,4 @@
-package me.aragot.togara.building;
+package me.aragot.togara.building.dimensions;
 
 import me.aragot.togara.Togara;
 import org.bukkit.Material;
@@ -13,14 +13,12 @@ public class FCoords {
     private int y;
     private int z;
     private int f;
-    private UUID worldId;
 
-    public FCoords(int x, int y, int z, int f, UUID worldId) {
+    public FCoords(int x, int y, int z, int f) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.f = f;
-        this.worldId = worldId;
     }
 
     public int getX() {
@@ -35,17 +33,21 @@ public class FCoords {
         return z;
     }
 
-    public int getF() {
-        return f;
+    public int getF(){
+        return this.f;
     }
 
     public UUID getWorldId(){
-        return this.worldId;
+        Layer layer = FDimension.getLayer(f);
+        if(layer == null) return null;
+
+        return layer.getWorldId();
     }
 
     public FCoords toGround(){
         int minY = -65;
         World world = Togara.instance.getServer().getWorld(this.getWorldId());
+
         if(world == null) return null;
 
         for(int i = y; y > minY; i--){
