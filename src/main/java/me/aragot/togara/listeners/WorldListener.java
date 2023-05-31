@@ -2,11 +2,14 @@ package me.aragot.togara.listeners;
 
 import me.aragot.togara.Togara;
 
+import me.aragot.togara.building.dimensions.FDimension;
+import me.aragot.togara.entities.player.TogaraPlayer;
 import me.aragot.togara.items.TogaraItem;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.ItemStack;
@@ -29,9 +32,20 @@ public class WorldListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onBlockBreak(BlockBreakEvent e) {
+        TogaraPlayer player = Togara.playerHandler.getTogaraPlayer(e.getPlayer());
+        if(player == null) return;
+        if(player.getF() == 0) return;
+
+        FDimension.getLayer(player.getF()).breakBlock(e.getBlock().getLocation(), e);
+
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onWorldUnloadEvent(WorldUnloadEvent e){
         Togara.entityHandler.unregister(e.getWorld());
+        FDimension.save();
     }
 
 }
