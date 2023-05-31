@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import me.aragot.togara.admin.items.ItemDealerGui;
 import me.aragot.togara.admin.items.ItemDealerPacketHandler;
+import me.aragot.togara.building.dimensions.FDimension;
 import me.aragot.togara.commands.*;
 import me.aragot.togara.entities.EntityHandler;
 import me.aragot.togara.items.ItemHandler;
@@ -55,6 +56,7 @@ public final class Togara extends JavaPlugin {
         storageManager = new StorageManager();
         StorageGui.init();
         ItemDealerGui.init();
+        FDimension.init();
 
         this.getCommand("tsummon").setExecutor(new TogaraSummonCommand());
         this.getCommand("test").setExecutor(new TestCommand());
@@ -111,5 +113,6 @@ public final class Togara extends JavaPlugin {
     public void onDisable() {
         entityHandler.unregister();
         storageManager.saveAllStorages();
+        FDimension.save();
     }
 }
