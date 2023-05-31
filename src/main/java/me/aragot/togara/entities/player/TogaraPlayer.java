@@ -1,6 +1,7 @@
 package me.aragot.togara.entities.player;
 
 import me.aragot.togara.Togara;
+import me.aragot.togara.building.dimensions.FDimension;
 import me.aragot.togara.entities.TogaraEntity;
 import me.aragot.togara.items.TogaraItem;
 import me.aragot.togara.stats.EntityStats;
@@ -16,6 +17,7 @@ public class TogaraPlayer extends TogaraEntity {
     private final Player player;
     private TotalStats lastTotalStats;
     private int refreshVars;
+    private int f;
 
     public TogaraPlayer(Player player){
         super(player);
@@ -40,6 +42,8 @@ public class TogaraPlayer extends TogaraEntity {
             lastTotalStats = this.totalStats;
             calculateTotalStats();
             regen();
+
+            if(f != 0) renderDimension();
             refreshVars = 0;
         }
         refreshVars++;
@@ -58,6 +62,10 @@ public class TogaraPlayer extends TogaraEntity {
         this.totalStats = totalStats;
     }
 
+    public void renderDimension(){
+        FDimension.getLayer(f).render(this.player);
+    }
+
     public void regen(){
         TotalStats totalStats = this.totalStats;
 
@@ -71,6 +79,10 @@ public class TogaraPlayer extends TogaraEntity {
         long amount = Math.round(totalStats.getMaxHealth() / 20);
         amount = amount * (totalStats.getRegen() / 100 + 1);
         heal(amount);
+    }
+
+    public int getF(){
+        return this.f;
     }
 
     public void heal(long amount){
