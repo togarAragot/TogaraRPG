@@ -1,6 +1,7 @@
 package me.aragot.togara.items;
 
 import me.aragot.togara.Togara;
+import me.aragot.togara.items.armor.boots.HermesBoots;
 import me.aragot.togara.items.crops.Crop;
 import me.aragot.togara.items.melee.SwordOfTogara;
 import me.aragot.togara.stats.ItemStats;
@@ -53,6 +54,13 @@ public class ItemHandler {
             itemList.add(item);
         }
         registerCustomItems();
+    }
+
+    public void registerCustomItems(){
+        //Weapons
+        SwordOfTogara.register();
+        //Armor
+        HermesBoots.register();
     }
 
     public TogaraItem getTogaraItemById(String itemId){
@@ -120,9 +128,6 @@ public class ItemHandler {
         }
         return rarity;
     }
-    public void registerCustomItems(){
-        SwordOfTogara.register();
-    }
 
     public String getItemIdFromStack(ItemStack stack){
         ItemMeta meta = stack.getItemMeta();
@@ -132,7 +137,9 @@ public class ItemHandler {
     }
 
     public TogaraItem getTogaraItemFromStack(ItemStack stack){
+        if(stack == null) return null;
         ItemMeta meta = stack.getItemMeta();
+        if(meta == null) return null;
         String itemId = meta.getPersistentDataContainer().get(new NamespacedKey(Togara.instance, "itemId"), PersistentDataType.STRING);
         if(itemId == null) return null;
         return getTogaraItemById(itemId);
