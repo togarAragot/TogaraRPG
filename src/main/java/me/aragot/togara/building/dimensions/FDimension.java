@@ -18,7 +18,7 @@ public class FDimension {
     public static void init(){
         load();
         ArrayList<Layer> temp = new ArrayList<>();
-        temp.add(new Layer(Togara.instance.getServer().getWorlds().get(0).getUID()));
+        temp.add(new Layer());
         temp.addAll(instance.layers);
         instance.layers = temp;
     }
@@ -33,13 +33,16 @@ public class FDimension {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            instance = new FDimension();
             return;
         }
         Gson gson = new Gson();
 
         try {
             JsonReader reader = new JsonReader(new FileReader(file));
-            instance = gson.fromJson(reader, FDimension.class);
+            FDimension temp = gson.fromJson(reader, FDimension.class);
+            if(temp == null) instance = new FDimension();
+            else instance = temp;
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
