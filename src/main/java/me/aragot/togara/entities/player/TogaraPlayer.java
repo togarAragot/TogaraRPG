@@ -42,6 +42,7 @@ public class TogaraPlayer extends TogaraEntity {
             lastTotalStats = this.totalStats;
             calculateTotalStats();
             regen();
+            adjustHealthBar();
 
             if(f != 0) renderDimension();
             refreshVars = 0;
@@ -64,6 +65,18 @@ public class TogaraPlayer extends TogaraEntity {
 
     public void renderDimension(){
         FDimension.getLayer(f).render(this.player);
+    }
+
+    private void adjustHealthBar(){
+        double maxHealth = Math.ceil(totalStats.getMaxHealth() / 5);
+        this.player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
+
+        if(totalStats.getHealth() != totalStats.getMaxHealth()){
+            double currentHealth = totalStats.getHealth() / 5;
+            this.player.setHealth(currentHealth);
+        } else {
+            this.player.setHealth(maxHealth);
+        }
     }
 
     public void regen(){
