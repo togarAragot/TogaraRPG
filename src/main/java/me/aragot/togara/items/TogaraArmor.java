@@ -3,6 +3,7 @@ package me.aragot.togara.items;
 
 import me.aragot.togara.stats.ItemStats;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,4 +37,11 @@ public class TogaraArmor extends Stattable {
         return armorList;
     }
 
+    public void equip(Player player){
+
+    }
+
+    public void unequip(Player player){
+
+    }
 }
