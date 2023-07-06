@@ -1,5 +1,6 @@
 package me.aragot.togara.building.dimensions;
 
+import me.aragot.togara.Togara;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -13,6 +14,11 @@ public class Layer {
     private ArrayList<FBlock> layerBlocks;
     private UUID worldId;
 
+
+    public Layer(){
+        this.worldId = Togara.instance.getServer().getWorlds().get(0).getUID();
+        this.layerId = 0;
+    }
     public Layer(UUID worldId){
         this.worldId = worldId;
         this.layerId = FDimension.instance.getNextLayerId();
