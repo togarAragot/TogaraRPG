@@ -6,6 +6,7 @@ import me.aragot.togara.Togara;
 import me.aragot.togara.entities.DamageType;
 import me.aragot.togara.entities.TogaraEntity;
 import me.aragot.togara.entities.player.TogaraPlayer;
+import me.aragot.togara.items.TogaraArmor;
 import me.aragot.togara.items.TogaraItem;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
@@ -18,6 +19,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -52,6 +55,18 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onFoodLevelChange(FoodLevelChangeEvent e){
         e.setCancelled(true);
+    }
+
+
+    @EventHandler
+    public void onEquipmentChange(InventoryClickEvent e){
+
+        if(e.getSlotType() == InventoryType.SlotType.ARMOR){
+            TogaraArmor equipped = (TogaraArmor) Togara.itemHandler.getTogaraItemFromStack(e.getCurrentItem());
+            TogaraArmor unequipped = (TogaraArmor) Togara.itemHandler.getTogaraItemFromStack(e.getCursor());
+            if(equipped != null) equipped.equip((Player) e.getWhoClicked());
+            if(unequipped != null) unequipped.unequip((Player) e.getWhoClicked());
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
